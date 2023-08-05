@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class Conditional<T, R> {
     private final Map<Predicate<T>, Function<T, R>> actionMap;
@@ -22,12 +23,6 @@ public class Conditional<T, R> {
         return new Conditional<>(map, null);
     }
 
-    public Conditional<T, R> andCondition(Predicate<T> predicate,
-                                          Function<T, R> callable) {
-        actionMap.put(predicate, callable);
-        return this;
-    }
-
     public static <T, R> Conditional<T, R> apply(Function<T, R> callable) {
         return new Conditional<>(new HashMap<>(), callable);
     }
@@ -38,6 +33,13 @@ public class Conditional<T, R> {
 
     public Conditional<T, R> orApply(Function<T, R> callable) {
         return new Conditional<>(this.actionMap, callable);
+    }
+
+    public <U> Conditional<T, U> map(Function<R, U> mapFunction) {
+        var updatedMap = this.actionMap.entrySet()
+                .stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().andThen(mapFunction)));
+
+        return new Conditional<>(updatedMap, null);
     }
 
     public R toOrElseGet(T object, Supplier<R> supplier) {
