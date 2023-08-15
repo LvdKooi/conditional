@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec6fb5d5-1380-4f7f-9958-45eefdbed424" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="ec6fb5d5-1380-4f7f-9958-45eefdbed424" name="Changes" comment="Improvements: making use of LinkedHashMap to guarantee the order of evaluating the predicates, introducing an applyToOrElse for Conditionals that need to return an (already evaluated, or constant) default value">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/nl/kooi/Conditional.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nl/kooi/Conditional.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -47,11 +45,24 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1691174766178</updated>
-      <workItem from="1691998511069" duration="3400000" />
+      <workItem from="1691998511069" duration="5830000" />
     </task>
+    <task id="LOCAL-00001" summary="Improvements: making use of LinkedHashMap to guarantee the order of evaluating the predicates, introducing an applyToOrElse for Conditionals that need to return an (already evaluated, or constant) default value">
+      <option name="closed" value="true" />
+      <created>1692082007036</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1692082007036</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Improvements: making use of LinkedHashMap to guarantee the order of evaluating the predicates, introducing an applyToOrElse for Conditionals that need to return an (already evaluated, or constant) default value" />
+    <option name="LAST_COMMIT_MESSAGE" value="Improvements: making use of LinkedHashMap to guarantee the order of evaluating the predicates, introducing an applyToOrElse for Conditionals that need to return an (already evaluated, or constant) default value" />
   </component>
 </project>
