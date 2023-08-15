@@ -1,7 +1,6 @@
 package nl.kooi;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -17,14 +16,17 @@ public class Conditional<T, R> {
     }
 
     private Conditional<T, R> addCondition(Predicate<T> predicate) {
-        var map = new HashMap<>(actionMap);
+        Objects.requireNonNull(currentFunction, "A predicate can only be added after an apply(Function<T, R> callable) or orApply(Function<T, R> callable)");
+        Objects.requireNonNull(predicate, "Predicate is not nullable");
+
+        var map = new LinkedHashMap<>(actionMap);
         map.put(predicate, currentFunction);
 
         return new Conditional<>(map, null);
     }
 
     public static <T, R> Conditional<T, R> apply(Function<T, R> callable) {
-        return new Conditional<>(new HashMap<>(), callable);
+        return new Conditional<>(new LinkedHashMap<>(), callable);
     }
 
     public Conditional<T, R> when(Predicate<T> condition) {
@@ -37,17 +39,37 @@ public class Conditional<T, R> {
 
     public <U> Conditional<T, U> map(Function<R, U> mapFunction) {
         var updatedMap = this.actionMap.entrySet()
-                .stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().andThen(mapFunction)));
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().andThen(mapFunction), (x, y) -> y, LinkedHashMap::new));
 
         return new Conditional<>(updatedMap, null);
     }
 
-    public R toOrElseGet(T object, Supplier<R> supplier) {
-        return actionMap.entrySet().stream()
-                .filter(entry -> entry.getKey().test(object))
-                .map(Map.Entry::getValue)
-                .map(fn -> fn.apply(object))
-                .findFirst()
+    public R applyToOrElseGet(T object, Supplier<? extends R> supplier) {
+        Objects.requireNonNull(supplier);
+
+        return Optional.ofNullable(object)
+                .map(t -> actionMap
+                        .entrySet()
+                        .stream()
+                        .filter(entry -> entry.getKey().test(t))
+                        .findFirst()
+                        .map(Map.Entry::getValue)
+                        .map(fn -> fn.apply(t))
+                        .orElseGet(supplier))
                 .orElseGet(supplier);
+    }
+
+    public R applyToOrElse(T object, R defaultValue) {
+        return Optional.ofNullable(object)
+                .map(t -> actionMap
+                        .entrySet()
+                        .stream()
+                        .filter(entry -> entry.getKey().test(t))
+                        .findFirst()
+                        .map(Map.Entry::getValue)
+                        .map(fn -> fn.apply(t))
+                        .orElse(defaultValue))
+                .orElse(defaultValue);
     }
 }
