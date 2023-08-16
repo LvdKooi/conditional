@@ -40,7 +40,6 @@ public class Conditional<T, R> {
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().andThen(mapFunction), (x, y) -> y, LinkedHashMap::new));
 
-
         return new Conditional<>(updatedMap, null);
     }
 

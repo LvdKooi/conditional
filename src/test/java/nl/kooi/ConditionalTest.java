@@ -69,7 +69,6 @@ class ConditionalTest {
                         .applyToOrElseThrow(3, IllegalArgumentException::new));
     }
 
-
     @Test
     void callablePassingInANull_applyingOrElseThrow() {
         assertThrows(IllegalArgumentException.class, () ->
@@ -90,7 +89,7 @@ class ConditionalTest {
     }
 
     @Test
-    void callableWithMultipleConditionsThatEvaluateToTrue_orderIsGuaranteed() {
+    void callableWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated() {
         var outcome = Conditional
                 .apply((Integer i) -> i + 1)
                 .when(i -> false)
