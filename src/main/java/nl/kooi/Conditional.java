@@ -60,7 +60,7 @@ public class Conditional<T, R> {
                 .orElse(defaultValue);
     }
 
-    public <X extends Throwable> R applyToOrThrow(T object, Supplier<? extends X> throwableSupplier) throws X {
+    public <X extends Throwable> R applyToOrElseThrow(T object, Supplier<? extends X> throwableSupplier) throws X {
         Objects.requireNonNull(throwableSupplier);
 
         return Optional.ofNullable(object)
