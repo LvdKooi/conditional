@@ -21,6 +21,16 @@ class ConditionalTest {
     }
 
     @Test
+    void callableWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull() {
+        var outcome = Conditional
+                .apply((Integer i) -> null)
+                .when(isEven())
+                .applyToOrElse(2, 0);
+
+        assertThat(outcome).isNull();
+    }
+
+    @Test
     void callableWithOneConditionThatEvaluatesToFalse_applyingOrElse() {
         var outcome = Conditional
                 .apply(timesTwo())
@@ -76,6 +86,17 @@ class ConditionalTest {
                         .apply(timesTwo())
                         .when(isEven())
                         .applyToOrElseThrow(null, IllegalArgumentException::new));
+    }
+
+
+    @Test
+    void callableWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull() {
+        var outcome = Conditional
+                .apply((Integer integer) -> null)
+                .when(isEven())
+                .applyToOrElseGet(2, () -> "hello world");
+
+        assertThat(outcome).isNull();
     }
 
     @Test

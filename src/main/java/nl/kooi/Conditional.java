@@ -46,36 +46,34 @@ public class Conditional<T, R> {
     public R applyToOrElseGet(T object, Supplier<? extends R> supplier) {
         Objects.requireNonNull(supplier);
 
-        return Optional.ofNullable(object)
-                .map(t -> applyMatchingFunction(t)
-                        .orElseGet(supplier))
-                .orElseGet(supplier);
+        return findMatchingFunction(object)
+                .orElseGet(() -> obj -> supplier.get())
+                .apply(object);
     }
 
     public R applyToOrElse(T object, R defaultValue) {
         return Optional.ofNullable(object)
-                .map(t -> applyMatchingFunction(t)
-                        .orElse(defaultValue))
-                .orElse(defaultValue);
+                .flatMap(this::findMatchingFunction)
+                .orElseGet(() -> obj -> defaultValue)
+                .apply(object);
     }
 
     public <X extends Throwable> R applyToOrElseThrow(T object, Supplier<? extends X> throwableSupplier) throws X {
         Objects.requireNonNull(throwableSupplier);
 
         return Optional.ofNullable(object)
-                .map(this::applyMatchingFunction)
+                .flatMap(this::findMatchingFunction)
                 .orElseThrow(throwableSupplier)
-                .orElseThrow(throwableSupplier);
+                .apply(object);
     }
 
-    private Optional<R> applyMatchingFunction(T t) {
+    private Optional<Function<T, R>> findMatchingFunction(T t) {
         return actionMap
                 .entrySet()
                 .stream()
                 .filter(entry -> entry.getKey().test(t))
                 .findFirst()
-                .map(Map.Entry::getValue)
-                .map(fn -> fn.apply(t));
+                .map(Map.Entry::getValue);
     }
 
     private void assertCurrentFunctionAndPredicateAreValid(Predicate<T> predicate) {

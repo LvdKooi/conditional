@@ -54,7 +54,7 @@
       <recent name="nl.kooi" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.ConditionalTest">
+  <component name="RunManager" selected="JUnit.ConditionalTest.callableWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull">
     <configuration name="ConditionalTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="conditional" />
       <extension name="coverage">
@@ -66,38 +66,6 @@
       <option name="PACKAGE_NAME" value="nl.kooi" />
       <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
       <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ConditionalTest.callablePassingInANull_applyingOrElse" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="conditional" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="nl.kooi.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="nl.kooi" />
-      <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
-      <option name="METHOD_NAME" value="callablePassingInANull_applyingOrElse" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ConditionalTest.callablePassingInANull_applyingOrElseThrow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="conditional" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="nl.kooi.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="nl.kooi" />
-      <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
-      <option name="METHOD_NAME" value="callablePassingInANull_applyingOrElseThrow" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -134,13 +102,45 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ConditionalTest.callableWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="conditional" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="nl.kooi.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="nl.kooi" />
+      <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
+      <option name="METHOD_NAME" value="callableWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ConditionalTest.callableWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="conditional" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="nl.kooi.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="nl.kooi" />
+      <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
+      <option name="METHOD_NAME" value="callableWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.ConditionalTest.callableWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull" />
+        <item itemvalue="JUnit.ConditionalTest.callableWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull" />
         <item itemvalue="JUnit.ConditionalTest" />
         <item itemvalue="JUnit.ConditionalTest.callableWithOneConditionThatEvaluatesToFalse_applyingOrElseGetReturningNull" />
         <item itemvalue="JUnit.ConditionalTest.callableWithOneConditionThatEvaluatesToFalse_applyingOrElseWithNull" />
-        <item itemvalue="JUnit.ConditionalTest.callablePassingInANull_applyingOrElse" />
-        <item itemvalue="JUnit.ConditionalTest.callablePassingInANull_applyingOrElseThrow" />
       </list>
     </recent_temporary>
   </component>
@@ -152,7 +152,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1691174766178</updated>
-      <workItem from="1691998511069" duration="14209000" />
+      <workItem from="1691998511069" duration="15921000" />
     </task>
     <task id="LOCAL-00001" summary="Improvements: making use of LinkedHashMap to guarantee the order of evaluating the predicates, introducing an applyToOrElse for Conditionals that need to return an (already evaluated, or constant) default value">
       <option name="closed" value="true" />
@@ -178,7 +178,15 @@
       <option name="project" value="LOCAL" />
       <updated>1692192292747</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Refactoring + unit tests">
+      <option name="closed" value="true" />
+      <created>1692196951362</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1692196951362</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
