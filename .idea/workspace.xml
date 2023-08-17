@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec6fb5d5-1380-4f7f-9958-45eefdbed424" name="Changes" comment="Refactoring + unit tests">
+    <list default="true" id="ec6fb5d5-1380-4f7f-9958-45eefdbed424" name="Changes" comment="extra unit tests + fixing issue where Conditional applies orElse/orElseGet/orElseThrow when function in apply/orApply returns null">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/nl/kooi/Conditional.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/nl/kooi/Conditional.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/nl/kooi/Main.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/nl/kooi/ConditionalTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/nl/kooi/ConditionalTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -54,7 +56,7 @@
       <recent name="nl.kooi" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.ConditionalTest.callableWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull">
+  <component name="RunManager" selected="JUnit.ConditionalTest.conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated">
     <configuration name="ConditionalTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="conditional" />
       <extension name="coverage">
@@ -66,54 +68,6 @@
       <option name="PACKAGE_NAME" value="nl.kooi" />
       <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
       <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ConditionalTest.callableWithOneConditionThatEvaluatesToFalse_applyingOrElseGetReturningNull" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="conditional" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="nl.kooi.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="nl.kooi" />
-      <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
-      <option name="METHOD_NAME" value="callableWithOneConditionThatEvaluatesToFalse_applyingOrElseGetReturningNull" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ConditionalTest.callableWithOneConditionThatEvaluatesToFalse_applyingOrElseWithNull" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="conditional" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="nl.kooi.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="nl.kooi" />
-      <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
-      <option name="METHOD_NAME" value="callableWithOneConditionThatEvaluatesToFalse_applyingOrElseWithNull" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ConditionalTest.callableWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="conditional" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="nl.kooi.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="nl.kooi" />
-      <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
-      <option name="METHOD_NAME" value="callableWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -134,13 +88,61 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ConditionalTest.conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="conditional" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="nl.kooi.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="nl.kooi" />
+      <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
+      <option name="METHOD_NAME" value="conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ConditionalTest.conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseThrow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="conditional" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="nl.kooi.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="nl.kooi" />
+      <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
+      <option name="METHOD_NAME" value="conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseThrow" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ConditionalTest.conditionalWithOneConditionThatEvaluatesToTrue_applyingOrElseThrow" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="conditional" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="nl.kooi.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="nl.kooi" />
+      <option name="MAIN_CLASS_NAME" value="nl.kooi.ConditionalTest" />
+      <option name="METHOD_NAME" value="conditionalWithOneConditionThatEvaluatesToTrue_applyingOrElseThrow" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.ConditionalTest.callableWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull" />
-        <item itemvalue="JUnit.ConditionalTest.callableWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull" />
+        <item itemvalue="JUnit.ConditionalTest.conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated" />
         <item itemvalue="JUnit.ConditionalTest" />
-        <item itemvalue="JUnit.ConditionalTest.callableWithOneConditionThatEvaluatesToFalse_applyingOrElseGetReturningNull" />
-        <item itemvalue="JUnit.ConditionalTest.callableWithOneConditionThatEvaluatesToFalse_applyingOrElseWithNull" />
+        <item itemvalue="JUnit.ConditionalTest.conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseThrow" />
+        <item itemvalue="JUnit.ConditionalTest.conditionalWithOneConditionThatEvaluatesToTrue_applyingOrElseThrow" />
+        <item itemvalue="JUnit.ConditionalTest.callableWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull" />
       </list>
     </recent_temporary>
   </component>
@@ -152,7 +154,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1691174766178</updated>
-      <workItem from="1691998511069" duration="15921000" />
+      <workItem from="1691998511069" duration="20319000" />
     </task>
     <task id="LOCAL-00001" summary="Improvements: making use of LinkedHashMap to guarantee the order of evaluating the predicates, introducing an applyToOrElse for Conditionals that need to return an (already evaluated, or constant) default value">
       <option name="closed" value="true" />
@@ -186,7 +188,15 @@
       <option name="project" value="LOCAL" />
       <updated>1692196951362</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="extra unit tests + fixing issue where Conditional applies orElse/orElseGet/orElseThrow when function in apply/orApply returns null">
+      <option name="closed" value="true" />
+      <created>1692212228156</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1692212228156</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -196,6 +206,7 @@
     <MESSAGE value="Improvements: making use of LinkedHashMap to guarantee the order of evaluating the predicates, introducing an applyToOrElse for Conditionals that need to return an (already evaluated, or constant) default value" />
     <MESSAGE value="Introducing an applyToOrThrow method" />
     <MESSAGE value="Refactoring + unit tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactoring + unit tests" />
+    <MESSAGE value="extra unit tests + fixing issue where Conditional applies orElse/orElseGet/orElseThrow when function in apply/orApply returns null" />
+    <option name="LAST_COMMIT_MESSAGE" value="extra unit tests + fixing issue where Conditional applies orElse/orElseGet/orElseThrow when function in apply/orApply returns null" />
   </component>
 </project>

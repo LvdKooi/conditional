@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ConditionalTest {
 
     @Test
-    void callableWithOneConditionThatEvaluatesToTrue() {
+    void conditionalWithOneConditionThatEvaluatesToTrue() {
         var outcome = Conditional
                 .apply(timesTwo())
                 .when(isEven())
@@ -21,7 +21,7 @@ class ConditionalTest {
     }
 
     @Test
-    void callableWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull() {
+    void conditionalWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull() {
         var outcome = Conditional
                 .apply((Integer i) -> null)
                 .when(isEven())
@@ -31,7 +31,7 @@ class ConditionalTest {
     }
 
     @Test
-    void callableWithOneConditionThatEvaluatesToFalse_applyingOrElse() {
+    void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElse() {
         var outcome = Conditional
                 .apply(timesTwo())
                 .when(isEven())
@@ -41,7 +41,7 @@ class ConditionalTest {
     }
 
     @Test
-    void callablePassingInANull_applyingOrElse() {
+    void conditionalPassingInANull_applyingOrElse() {
         var outcome = Conditional
                 .apply(timesTwo())
                 .when(isEven())
@@ -51,7 +51,7 @@ class ConditionalTest {
     }
 
     @Test
-    void callableWithOneConditionThatEvaluatesToFalse_applyingOrElseWithNull() {
+    void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseWithNull() {
         var outcome = Conditional
                 .apply(timesTwo())
                 .when(isEven())
@@ -61,7 +61,7 @@ class ConditionalTest {
     }
 
     @Test
-    void callableWithOneConditionThatEvaluatesToFalse_applyingOrElseGetReturningNull() {
+    void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseGetReturningNull() {
         var outcome = Conditional
                 .apply(timesTwo())
                 .when(isEven())
@@ -71,16 +71,18 @@ class ConditionalTest {
     }
 
     @Test
-    void callableWithOneConditionThatEvaluatesToFalse_applyingOrElseThrow() {
-        assertThrows(IllegalArgumentException.class, () ->
+    void conditionalWithOneConditionThatEvaluatesToTrue_applyingOrElseThrow() {
+        var outcome =
                 Conditional
                         .apply(timesTwo())
                         .when(isEven())
-                        .applyToOrElseThrow(3, IllegalArgumentException::new));
+                        .applyToOrElseThrow(2, IllegalArgumentException::new);
+
+        assertThat(outcome).isEqualTo(4);
     }
 
     @Test
-    void callablePassingInANull_applyingOrElseThrow() {
+    void conditionalPassingInANull_applyingOrElseThrow() {
         assertThrows(IllegalArgumentException.class, () ->
                 Conditional
                         .apply(timesTwo())
@@ -88,9 +90,8 @@ class ConditionalTest {
                         .applyToOrElseThrow(null, IllegalArgumentException::new));
     }
 
-
     @Test
-    void callableWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull() {
+    void conditionalWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull() {
         var outcome = Conditional
                 .apply((Integer integer) -> null)
                 .when(isEven())
@@ -100,7 +101,7 @@ class ConditionalTest {
     }
 
     @Test
-    void callableWithOneConditionThatEvaluatesToFalse_applyingOrElseGet() {
+    void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseGet() {
         var outcome = Conditional
                 .apply((Integer integer) -> integer.toString())
                 .when(isEven().negate())
@@ -110,27 +111,27 @@ class ConditionalTest {
     }
 
     @Test
-    void callableWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated() {
+    void conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated() {
         var outcome = Conditional
-                .apply((Integer i) -> i + 1)
-                .when(i -> false)
-                .orApply(i -> i + 2)
-                .when(i -> false)
-                .orApply(i -> i + 3)
-                .when(i -> true)
-                .orApply(i -> i + 4)
-                .when(i -> true)
-                .orApply(i -> i + 5)
-                .when(i -> true)
-                .orApply(i -> i + 6)
-                .when(i -> false)
+                .apply(plus(1))
+                .when(returnFalse())
+                .orApply(plus(2))
+                .when(returnFalse())
+                .orApply(plus(3))
+                .when(returnTrue())
+                .orApply(plus(4))
+                .when(returnTrue())
+                .orApply(plus(5))
+                .when(returnTrue())
+                .orApply(plus(6))
+                .when(returnFalse())
                 .applyToOrElse(0, 9);
 
         assertThat(outcome).isEqualTo(3);
     }
 
     @Test
-    void callableWithOneConditionThatEvaluatesToTrue_applyingAMapFunction() {
+    void conditionalWithOneConditionThatEvaluatesToTrue_applyingAMapFunction() {
         var outcome = Conditional
                 .apply(timesTwo())
                 .when(isEven())
@@ -146,5 +147,17 @@ class ConditionalTest {
 
     private static Predicate<Integer> isEven() {
         return i -> i % 2 == 0;
+    }
+
+    private static UnaryOperator<Integer> plus(int plus) {
+        return i -> i + plus;
+    }
+
+    private static Predicate<Integer> returnFalse() {
+        return i -> false;
+    }
+
+    private static Predicate<Integer> returnTrue() {
+        return i -> true;
     }
 }
