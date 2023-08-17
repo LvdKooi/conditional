@@ -1,5 +1,7 @@
 package nl.kooi;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Predicate;
@@ -10,135 +12,182 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ConditionalTest {
 
-    @Test
-    void conditionalWithOneConditionThatEvaluatesToTrue() {
-        var outcome = Conditional
+    @Nested
+    @DisplayName("Tests for conditionals with applyToOrElse")
+    class applyToOrElse {
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToTrue() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .applyToOrElse(2, 0);
+
+            assertThat(outcome).isEqualTo(4);
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToFalse() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .applyToOrElse(3, 0);
+
+            assertThat(outcome).isEqualTo(0);
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToTrue_applyingMap() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .map(i -> String.format("And the number is: %d", i))
+                    .applyToOrElse(2, "No outcome");
+
+            assertThat(outcome).isEqualTo("And the number is: 4");
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToFalse_ignoringMap() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .map(i -> String.format("And the number is: %d", i))
+                    .applyToOrElse(3, "No outcome");
+
+            assertThat(outcome).isEqualTo("No outcome");
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull() {
+            var outcome = Conditional
+                    .apply((Integer i) -> null)
+                    .when(isEven())
+                    .applyToOrElse(2, 0);
+
+            assertThat(outcome).isNull();
+        }
+
+        @Test
+        void conditionalPassingInANull_applyingOrElse() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .applyToOrElse(null, 0);
+
+            assertThat(outcome).isEqualTo(0);
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseWithNull() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .applyToOrElse(3, null);
+
+            assertThat(outcome).isNull();
+        }
+
+        @Test
+        void conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated() {
+            var outcome = Conditional
+                    .apply(plus(1)).when(returnFalse())
+                    .orApply(plus(2)).when(returnFalse())
+                    .orApply(plus(3)).when(returnTrue())
+                    .orApply(plus(4)).when(returnTrue())
+                    .orApply(plus(5)).when(returnTrue())
+                    .orApply(plus(6)).when(returnFalse())
+                    .applyToOrElse(0, 9);
+
+            assertThat(outcome).isEqualTo(3);
+        }
+    }
+
+    @Nested
+    @DisplayName("Tests for conditionals with applyToOrElseGet")
+    class applyToOrElseGet {
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToFalse() {
+            var outcome = Conditional
+                    .apply((Integer integer) -> integer.toString())
+                    .when(isEven().negate())
+                    .applyToOrElseGet(2, () -> "hello world");
+
+            assertThat(outcome).isEqualTo("hello world");
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToTrue_applyingMap() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .map(i -> String.format("And the number is: %d", i))
+                    .applyToOrElseGet(2, () -> "No outcome");
+
+            assertThat(outcome).isEqualTo("And the number is: 4");
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToFalse_ignoringMap() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .map(i -> String.format("And the number is: %d", i))
+                    .applyToOrElseGet(3, () -> "No outcome");
+
+            assertThat(outcome).isEqualTo("No outcome");
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseGetReturningNull() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .applyToOrElseGet(3, () -> null);
+
+            assertThat(outcome).isNull();
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull() {
+            var outcome = Conditional
+                    .apply((Integer integer) -> null)
+                    .when(isEven())
+                    .applyToOrElseGet(2, () -> "hello world");
+
+            assertThat(outcome).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("Tests for conditionals with applyToOrElseThrow")
+    class applyToOrElseThrow {
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToTrue() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .applyToOrElseThrow(2, IllegalArgumentException::new);
+
+            assertThat(outcome).isEqualTo(4);
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToFalse() {
+            assertThrows(IllegalArgumentException.class, () ->
+                    conditionalThatMultipliesBy2WhenNumberIsEven()
+                            .applyToOrElseThrow(3, IllegalArgumentException::new));
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToTrue_applyingMap() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .map(i -> String.format("And the number is: %d", i))
+                    .applyToOrElseThrow(2, IllegalArgumentException::new);
+
+            assertThat(outcome).isEqualTo("And the number is: 4");
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToFalse_ignoringMap() {
+            assertThrows(IllegalArgumentException.class, () ->
+                    conditionalThatMultipliesBy2WhenNumberIsEven()
+                            .map(i -> String.format("And the number is: %d", i))
+                            .applyToOrElseThrow(3, IllegalArgumentException::new));
+        }
+
+        @Test
+        void conditionalPassingInANull() {
+            assertThrows(IllegalArgumentException.class, () ->
+                    conditionalThatMultipliesBy2WhenNumberIsEven()
+                            .applyToOrElseThrow(null, IllegalArgumentException::new));
+        }
+    }
+
+    private static Conditional<Integer, Integer> conditionalThatMultipliesBy2WhenNumberIsEven() {
+        return Conditional
                 .apply(timesTwo())
-                .when(isEven())
-                .applyToOrElse(2, 0);
-
-        assertThat(outcome).isEqualTo(4);
-    }
-
-    @Test
-    void conditionalWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull() {
-        var outcome = Conditional
-                .apply((Integer i) -> null)
-                .when(isEven())
-                .applyToOrElse(2, 0);
-
-        assertThat(outcome).isNull();
-    }
-
-    @Test
-    void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElse() {
-        var outcome = Conditional
-                .apply(timesTwo())
-                .when(isEven())
-                .applyToOrElse(3, 0);
-
-        assertThat(outcome).isEqualTo(0);
-    }
-
-    @Test
-    void conditionalPassingInANull_applyingOrElse() {
-        var outcome = Conditional
-                .apply(timesTwo())
-                .when(isEven())
-                .applyToOrElse(null, 0);
-
-        assertThat(outcome).isEqualTo(0);
-    }
-
-    @Test
-    void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseWithNull() {
-        var outcome = Conditional
-                .apply(timesTwo())
-                .when(isEven())
-                .applyToOrElse(3, null);
-
-        assertThat(outcome).isNull();
-    }
-
-    @Test
-    void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseGetReturningNull() {
-        var outcome = Conditional
-                .apply(timesTwo())
-                .when(isEven())
-                .applyToOrElseGet(3, () -> null);
-
-        assertThat(outcome).isNull();
-    }
-
-    @Test
-    void conditionalWithOneConditionThatEvaluatesToTrue_applyingOrElseThrow() {
-        var outcome =
-                Conditional
-                        .apply(timesTwo())
-                        .when(isEven())
-                        .applyToOrElseThrow(2, IllegalArgumentException::new);
-
-        assertThat(outcome).isEqualTo(4);
-    }
-
-    @Test
-    void conditionalPassingInANull_applyingOrElseThrow() {
-        assertThrows(IllegalArgumentException.class, () ->
-                Conditional
-                        .apply(timesTwo())
-                        .when(isEven())
-                        .applyToOrElseThrow(null, IllegalArgumentException::new));
-    }
-
-    @Test
-    void conditionalWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull() {
-        var outcome = Conditional
-                .apply((Integer integer) -> null)
-                .when(isEven())
-                .applyToOrElseGet(2, () -> "hello world");
-
-        assertThat(outcome).isNull();
-    }
-
-    @Test
-    void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseGet() {
-        var outcome = Conditional
-                .apply((Integer integer) -> integer.toString())
-                .when(isEven().negate())
-                .applyToOrElseGet(2, () -> "hello world");
-
-        assertThat(outcome).isEqualTo("hello world");
-    }
-
-    @Test
-    void conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated() {
-        var outcome = Conditional
-                .apply(plus(1))
-                .when(returnFalse())
-                .orApply(plus(2))
-                .when(returnFalse())
-                .orApply(plus(3))
-                .when(returnTrue())
-                .orApply(plus(4))
-                .when(returnTrue())
-                .orApply(plus(5))
-                .when(returnTrue())
-                .orApply(plus(6))
-                .when(returnFalse())
-                .applyToOrElse(0, 9);
-
-        assertThat(outcome).isEqualTo(3);
-    }
-
-    @Test
-    void conditionalWithOneConditionThatEvaluatesToTrue_applyingAMapFunction() {
-        var outcome = Conditional
-                .apply(timesTwo())
-                .when(isEven())
-                .map(i -> String.format("And the number is: %d", i))
-                .applyToOrElseGet(2, () -> "No outcome");
-
-        assertThat(outcome).isEqualTo("And the number is: 4");
+                .when(isEven());
     }
 
     private static UnaryOperator<Integer> timesTwo() {
