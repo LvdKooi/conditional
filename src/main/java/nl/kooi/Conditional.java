@@ -51,7 +51,8 @@ public class Conditional<T, R> {
     public R applyToOrElseGet(T object, Supplier<? extends R> supplier) {
         Objects.requireNonNull(supplier);
 
-        return findMatchingFunction(object)
+        return Optional.ofNullable(object)
+                .flatMap(this::findMatchingFunction)
                 .orElseGet(() -> obj -> supplier.get())
                 .apply(object);
     }
@@ -81,7 +82,8 @@ public class Conditional<T, R> {
     }
 
     private void assertCurrentFunctionAndPredicateAreValid(Predicate<T> predicate) {
-        Objects.requireNonNull(currentFunction, "The function that belongs to this condition is not yet set. A predicate can only be added after an apply(Function<T, R> function) or orApply(Function<T, R> function).");
+        Objects.requireNonNull(currentFunction, "The function that belongs to this condition is not yet set. " +
+                "A predicate can only be added after an apply(Function<T, R> function) or orApply(Function<T, R> function).");
         Objects.requireNonNull(predicate);
     }
 
