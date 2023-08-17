@@ -18,8 +18,9 @@ public class Conditional<T, R> {
         this.currentFunction = currentFunction;
     }
 
-    public static <T, R> Conditional<T, R> apply(Function<T, R> callable) {
-        return new Conditional<>(new ArrayDeque<>(1), callable);
+    public static <T, R> Conditional<T, R> apply(Function<T, R> function) {
+        Objects.requireNonNull(function);
+        return new Conditional<>(new ArrayDeque<>(1), function);
     }
 
     public Conditional<T, R> when(Predicate<T> condition) {
@@ -31,11 +32,14 @@ public class Conditional<T, R> {
         return new Conditional<>(queue, null);
     }
 
-    public Conditional<T, R> orApply(Function<T, R> callable) {
-        return new Conditional<>(this.actionQueue, callable);
+    public Conditional<T, R> orApply(Function<T, R> function) {
+        Objects.requireNonNull(function);
+        return new Conditional<>(this.actionQueue, function);
     }
 
     public <U> Conditional<T, U> map(Function<R, U> mapFunction) {
+        Objects.requireNonNull(mapFunction);
+
         var queue = this.actionQueue
                 .stream()
                 .map(pair -> new Pair<>(pair.key(), pair.value().andThen(mapFunction)))
@@ -77,8 +81,8 @@ public class Conditional<T, R> {
     }
 
     private void assertCurrentFunctionAndPredicateAreValid(Predicate<T> predicate) {
-        Objects.requireNonNull(currentFunction, "A predicate can only be added after an apply(Function<T, R> callable) or orApply(Function<T, R> callable)");
-        Objects.requireNonNull(predicate, "Predicate is not nullable");
+        Objects.requireNonNull(currentFunction, "The function that belongs to this condition is not yet set. A predicate can only be added after an apply(Function<T, R> function) or orApply(Function<T, R> function).");
+        Objects.requireNonNull(predicate);
     }
 
     private record Pair<T, R>(T key, R value) {

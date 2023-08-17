@@ -78,16 +78,18 @@ class ConditionalTest {
 
         @Test
         void conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated() {
-            var outcome = Conditional
-                    .apply(plus(1)).when(returnFalse())
-                    .orApply(plus(2)).when(returnFalse())
-                    .orApply(plus(3)).when(returnTrue())
-                    .orApply(plus(4)).when(returnTrue())
-                    .orApply(plus(5)).when(returnTrue())
-                    .orApply(plus(6)).when(returnFalse())
+            var outcome = conditionalWithMultipleConditionsThatEvaluateToTrue()
                     .applyToOrElse(0, 9);
 
             assertThat(outcome).isEqualTo(3);
+        }
+
+        @Test
+        void conditionalWithMultipleConditionsThatAllEvaluateToFalse() {
+            var outcome = conditionalWithMultipleConditionsThatEvaluateToFalse()
+                    .applyToOrElse(0, 9);
+
+            assertThat(outcome).isEqualTo(9);
         }
     }
 
@@ -102,6 +104,16 @@ class ConditionalTest {
                     .applyToOrElseGet(2, () -> "hello world");
 
             assertThat(outcome).isEqualTo("hello world");
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesTTrue() {
+            var outcome = Conditional
+                    .apply((Integer integer) -> integer.toString())
+                    .when(isEven())
+                    .applyToOrElseGet(2, () -> "hello world");
+
+            assertThat(outcome).isEqualTo("2");
         }
 
         @Test
@@ -138,6 +150,22 @@ class ConditionalTest {
                     .applyToOrElseGet(2, () -> "hello world");
 
             assertThat(outcome).isNull();
+        }
+
+        @Test
+        void conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated() {
+            var outcome = conditionalWithMultipleConditionsThatEvaluateToTrue()
+                    .applyToOrElseGet(0, () -> 9);
+
+            assertThat(outcome).isEqualTo(3);
+        }
+
+        @Test
+        void conditionalWithMultipleConditionsThatAllEvaluateToFalse() {
+            var outcome = conditionalWithMultipleConditionsThatEvaluateToFalse()
+                    .applyToOrElseGet(0, () -> 9);
+
+            assertThat(outcome).isEqualTo(9);
         }
     }
 
@@ -182,6 +210,93 @@ class ConditionalTest {
                     conditionalThatMultipliesBy2WhenNumberIsEven()
                             .applyToOrElseThrow(null, IllegalArgumentException::new));
         }
+
+        @Test
+        void conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated() {
+            var outcome = conditionalWithMultipleConditionsThatEvaluateToTrue()
+                    .applyToOrElseThrow(0, IllegalArgumentException::new);
+
+            assertThat(outcome).isEqualTo(3);
+        }
+
+        @Test
+        void conditionalWithMultipleConditionsThatAllEvaluateToFalse() {
+            assertThrows(IllegalArgumentException.class, () -> conditionalWithMultipleConditionsThatEvaluateToFalse()
+                    .applyToOrElseThrow(0, IllegalArgumentException::new));
+        }
+    }
+
+    @Nested
+    @DisplayName("Tests for wrong use of the Conditional")
+    class ExceptionHandlingTests {
+
+        @Test
+        void whenShouldNotBePlacedBeforeOrApply() {
+            assertThat(assertThrows(NullPointerException.class, () -> Conditional.apply((Integer i) -> i * i)
+                    .when(returnTrue())
+                    .when(returnTrue())
+                    .orApply(i -> i * 2)
+                    .applyToOrElse(1, 3456)).getMessage())
+                    .isEqualTo("The function that belongs to this condition is not yet set. A predicate can " +
+                            "only be added after an apply(Function<T, R> function) or orApply(Function<T, R> function).");
+        }
+
+        @Test
+        void predicateShouldNotBeNull() {
+            assertThrows(NullPointerException.class, () -> Conditional.apply((Integer i) -> i * i)
+                    .when(null)
+                    .applyToOrElse(1, 3456));
+        }
+
+        @Test
+        void functionShouldNotBeNull_orApply() {
+            assertThrows(NullPointerException.class, () -> Conditional.apply((Integer i) -> i * 2)
+                    .when(returnTrue())
+                    .orApply(null)
+                    .when(returnFalse())
+                    .applyToOrElse(1, 3456));
+        }
+
+        @Test
+        void functionShouldNotBeNull_apply() {
+            assertThrows(NullPointerException.class, () -> Conditional.apply(null)
+                    .when(null)
+                    .orApply(null)
+                    .when(null)
+                    .applyToOrElse(1, 3456));
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToFalse_passingNullThrowableSupplierToOrElseThrow() {
+            assertThrows(NullPointerException.class, () -> conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .applyToOrElseThrow(3, null));
+        }
+
+        @Test
+        void conditionalWithOneConditionThatEvaluatesToFalse_passingNullSupplierToOrElseGet() {
+            assertThrows(NullPointerException.class, () -> conditionalThatMultipliesBy2WhenNumberIsEven()
+                    .applyToOrElseGet(3, null));
+        }
+    }
+
+    private static Conditional<Integer, Integer> conditionalWithMultipleConditionsThatEvaluateToTrue() {
+        return Conditional
+                .apply(plus(1)).when(returnFalse())
+                .orApply(plus(2)).when(returnFalse())
+                .orApply(plus(3)).when(returnTrue())
+                .orApply(plus(4)).when(returnTrue())
+                .orApply(plus(5)).when(returnTrue())
+                .orApply(plus(6)).when(returnFalse());
+    }
+
+    private static Conditional<Integer, Integer> conditionalWithMultipleConditionsThatEvaluateToFalse() {
+        return Conditional
+                .apply(plus(1)).when(returnFalse())
+                .orApply(plus(2)).when(returnFalse())
+                .orApply(plus(3)).when(returnFalse())
+                .orApply(plus(4)).when(returnFalse())
+                .orApply(plus(5)).when(returnFalse())
+                .orApply(plus(6)).when(returnFalse());
     }
 
     private static Conditional<Integer, Integer> conditionalThatMultipliesBy2WhenNumberIsEven() {
