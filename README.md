@@ -94,7 +94,7 @@ Conditional
 ### Transforming the value coming from the applied function with _map_
 The Conditional includes a single intermediate operation responsible for converting the value derived from the applied action into a value of the subsequent type. Just like Java's Optional and Stream, this function is called _map_.
 
-- **map**: which accepts a Function<R, U>, wherein R represents the potential value returned from the _apply_ or _orApply_ methods, and U denotes the type of the value to which this method is mapping. This method is an optional part of the Conditional pipeline.
+- **map**: which accepts a Function<R, U>, wherein R represents the potential value returned from the _apply_ or _orApply_ methods, and U denotes the type of the value to which this method is mapping. This method is an optional part of the Conditional pipeline, and can be chained multiple times.
 
 An example containing a map function:
 
