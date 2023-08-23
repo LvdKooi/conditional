@@ -65,11 +65,11 @@ A Conditional pipeline is composed of intermediate operations and a terminal ope
 The Conditional encompasses 3 intermediate operations that serve to define an action alongside the corresponding condition, which must evaluate as true for the action to be executed.
 
 These are:
-- **apply**: which is necessary to create the Conditional. This method receives a Function<T, R>, where T is the type of the value which is the input for the Conditonal, and R is the value that is returned by the function.
+- **apply**: which is the entry point of the Conditional, containing the first action. This method receives a Function<T, R>, where T is the type of the value which is the input for the Conditonal, and R is the value that is returned by the function.
 - **when**: which is the condition that must evaluate to true for the previous function to be applied. This method takes a Predicate<T>, where T denotes the input value type for the Conditional.
 - **orApply**: which outlines the subsequent action to be executed exclusively when the subsequent condition evaluates to true, under the condition that none of the preceding conditions have evaluated to true. Just like _apply_, this method receives a Function<T, R>.
 
-The _apply_ should consistently be succeeded by a corresponding when, and similarly, this pattern applies to _orApply_ as well.
+The _apply_ should consistently be succeeded by a corresponding _when_, and similarly, this pattern applies to _orApply_ as well.
 
 Conditions are assessed in the same order as they were chained within the Conditional pipeline. Please be aware that conditions and actions are lazy evaluated, meaning that only the action of the first condition that evaluates to true is executed, leaving all other conditions and actions unevaluated.
 
