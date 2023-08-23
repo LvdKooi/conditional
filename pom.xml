@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>nl.laurensvanderkooi</groupId>
+    <groupId>io.github.lvdkooi</groupId>
     <artifactId>conditional</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
-    <name>conditional</name>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>The Conditional Monad: Structuring Conditional Actions</description>
     <url>https://github.com/LvdKooi/conditional</url>
 
