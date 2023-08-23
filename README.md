@@ -128,7 +128,7 @@ The applyToOrElse method takes 2 arguments: the first is the value that will be 
 ```
 
 ### applyToOrElseGet
-The applyToOrElse method takes 2 arguments: the first argument is the value that will be processed by the Conditional pipeline, the second a Supplier that returns an object of the same type that would otherwise be returned by the pipeline if any condition in the pipeline matches. The supplier is also invoked when the first argument (the value to be processed) is null. The second argument to this method is lazy evaluated, and suitable for operations that you would only like to perform when none of the conditions evaluates to true.
+The applyToOrElseGet method takes 2 arguments: the first argument is the value that will be processed by the Conditional pipeline, the second a Supplier that returns an object of the same type that would otherwise be returned by the pipeline if any condition in the pipeline matches. The supplier is also invoked when the first argument (the value to be processed) is null. The second argument to this method is lazy evaluated, and suitable for operations that you would only like to perform when none of the conditions evaluates to true.
 
 ```
     public Double calculateNumber(int number) {
@@ -141,7 +141,7 @@ The applyToOrElse method takes 2 arguments: the first argument is the value that
 ```
 
 ### applyToOrElseThrow
-The applyToOrElse method takes 2 arguments: the first argument is the value that will be processed by the Conditional pipeline, the second a Supplier that returns a Throwable that will be thrown if no condition in the pipeline matches. This throwable is also thrown when the first argument (the value to be processed) is null. The second argument to this method is lazy evaluated.
+The applyToOrElseThrow method takes 2 arguments: the first argument is the value that will be processed by the Conditional pipeline, the second a Supplier that returns a Throwable that will be thrown if no condition in the pipeline matches. This throwable is also thrown when the first argument (the value to be processed) is null. The second argument to this method is lazy evaluated.
 
 ```
     public Double calculateNumber(int number) {
