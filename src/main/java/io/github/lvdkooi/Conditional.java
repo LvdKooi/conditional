@@ -10,8 +10,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * The `Conditional` class allows chaining and applying conditional actions based on predicates and functions.
- * It supports building a sequence of conditions and corresponding actions to be executed based on those conditions.
+ * The `Conditional` class offers a way to organize conditional actions using a monadic approach. It allows chaining
+ * and applying conditional actions based on predicates and functions. It supports building a sequence of conditions and
+ * corresponding actions to be executed based on those conditions and has the capability to default to a predefined
+ * action or value when no conditions are met.
  *
  * @param <T> The type of input object.
  * @param <R> The type of result produced by the actions.
@@ -33,7 +35,8 @@ public class Conditional<T, R> {
     }
 
     /**
-     * Creates a new `Conditional` instance with an initial function to be applied.
+     * Defines the initial action for the 'Conditional' pipeline. This method should consistently be
+     * succeeded by a corresponding when method, containing the condition that has to match for this function to be evaluated.
      *
      * @param function The initial function to be associated with the `Conditional` instance.
      * @param <T>      The type of input object.
@@ -47,7 +50,8 @@ public class Conditional<T, R> {
     }
 
     /**
-     * Adds a condition-action pair to the `Conditional` instance based on the given condition.
+     * Incorporates a condition-action pair into the Conditional instance, utilizing the provided condition and the
+     * action that was previously specified in the apply/orApply chain before this when method.
      *
      * @param condition The condition to be checked before applying the current function.
      * @return A new `Conditional` instance with the added condition-action pair.
@@ -63,9 +67,12 @@ public class Conditional<T, R> {
     }
 
     /**
-     * Creates a new `Conditional` instance with an alternative function to be applied.
+     * Defines a subsequent action to be executed when the subsequent condition evaluates to true,
+     * but only if none of the preceding conditions have evaluated to true.  This method should consistently be
+     * succeeded by a corresponding when method, containing the condition that has to match for this function
+     * to be evaluated.
      *
-     * @param function The alternative function to be associated with the new `Conditional` instance.
+     * @param function The alternative function to be associated with a succeeding condition.
      * @return A new `Conditional` instance with the provided alternative function.
      * @throws NullPointerException If the provided function is null.
      */
@@ -75,7 +82,7 @@ public class Conditional<T, R> {
     }
 
     /**
-     * Maps the result of the current function to a new result type using the provided mapping function.
+     *  If a condition matches, applies the provided function to the outcome of the matching action.
      *
      * @param mapFunction The mapping function to transform the current function's result.
      * @param <U>         The type of result produced by the mapping function.
