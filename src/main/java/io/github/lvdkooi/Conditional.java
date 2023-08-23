@@ -67,8 +67,8 @@ public class Conditional<T, R> {
     }
 
     /**
-     * Defines a subsequent action to be executed when the subsequent condition evaluates to true,
-     * but only if none of the preceding conditions have evaluated to true.  This method should consistently be
+     * Defines an alternative action to be executed when the subsequent condition evaluates to true,
+     * but only if none of the preceding conditions have evaluated to true. This method should consistently be
      * succeeded by a corresponding when method, containing the condition that has to match for this function
      * to be evaluated.
      *
@@ -82,7 +82,7 @@ public class Conditional<T, R> {
     }
 
     /**
-     *  If a condition matches, applies the provided function to the outcome of the matching action.
+     * If a condition matches, applies the provided function to the outcome of the matching action.
      *
      * @param mapFunction The mapping function to transform the current function's result.
      * @param <U>         The type of result produced by the mapping function.
