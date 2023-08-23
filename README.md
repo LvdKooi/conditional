@@ -29,7 +29,7 @@ In this instance, the scenario can be distilled as follows:
 - Otherwise, if the number is greater than 100, halve it;
 - If none of the conditions are satisfied, default to 0.0.
 
-In order to maintain code readability, it is recommended to use this monad with actions (which are used in the _apply/orApply_ methods) and conditions (that are used in the _when_ methods) that are encapsulated within separate methods.
+In order to maintain code readability, it is recommended to use this monad with actions (which are used in the ```apply```/```orApply``` methods) and conditions (that are used in the ```when``` methods) that are encapsulated within separate methods.
 
 This would look like this:
 
@@ -70,13 +70,13 @@ A Conditional pipeline is composed of intermediate operations and a terminal ope
 The Conditional encompasses 3 intermediate operations that serve to define an action alongside a corresponding condition, which must evaluate to true for the action to be executed.
 
 These are:
-- **apply**: which is the entry point of the Conditional, containing the first action. This method receives a Function<T, R>, where T is the type of the value which is the input for the Conditonal, and R is the value that is returned by the function.
-- **when**: which is the condition that must evaluate to true for the previous function to be applied. This method takes a Predicate<T>, where T denotes the input value type for the Conditional.
-- **orApply**: which outlines the subsequent action to be executed exclusively when the subsequent condition evaluates to true, under the condition that none of the preceding conditions have evaluated to true. Just like _apply_, this method receives a Function<T, R>.
+- ```apply```: which is the entry point of the Conditional, containing the first action. This method receives a ```Function<T, R>```, where ```T``` is the type of the value which is the input for the Conditonal, and ```R``` is the value that is returned by the function.
+- ```when```: which is the condition that must evaluate to true for the previous function to be applied. This method takes a ```Predicate<T>```, where ```T``` denotes the input value type for the Conditional.
+- ```orApply```: which outlines the subsequent action to be executed exclusively when the subsequent condition evaluates to true, under the condition that none of the preceding conditions have evaluated to true. Just like ```apply```, this method receives a ```Function<T, R>```.
 
-The _apply_ should consistently be succeeded by a corresponding _when_, and similarly, this pattern applies to _orApply_ as well.
+The ```apply``` should consistently be succeeded by a corresponding ```when```, and similarly, this pattern applies to ```orApply``` as well.
 
-Conditions are assessed in the same order as they were chained within the Conditional pipeline. Please be aware that conditions and actions are lazy evaluated, meaning that only the action of the first condition that evaluates to true is executed, leaving all other conditions and actions unevaluated.
+Conditions are assessed in the same order as they were chained within the Conditional pipeline. Please be aware that conditions and actions are _lazy evaluated_, meaning that only the action of the first condition that evaluates to true is executed, leaving all other conditions and actions unevaluated.
 
 An example containing one action/condition pair:
 
@@ -97,9 +97,9 @@ Conditional
 ```
 
 ### - _map_
-The Conditional includes a single intermediate operation responsible for converting the value derived from the applied action into a value of a subsequent type. Just like Java's Optional and Stream, this function is called _map_.
+The Conditional includes a single intermediate operation responsible for converting the value derived from the applied action into a value of a subsequent type. Just like Java's Optional and Stream, this function is called ```map```.
 
-- **map**: which accepts a Function<R, U>, wherein R represents the potential value returned from the _apply_ or _orApply_ methods, and U denotes the type of the value to which this method is mapping. This method is an optional part of the Conditional pipeline, and can be chained multiple times.
+- ```map```: which accepts a ```Function<R, U>```, wherein ```R``` represents the potential value returned from the ```apply``` or ```orApply``` methods, and ```U``` denotes the type of the value to which this method is mapping. This method is an optional part of the Conditional pipeline, and can be chained multiple times.
 
 An example containing a map function:
 
@@ -112,13 +112,13 @@ Conditional
   .map(d -> String.format("The outcome was: %f", d))
 ```
 
-In this example, if any of the conditions evaluates to true, the map function takes the Double originating from the action linked with that condition and maps it to a String.
+In this example, if any of the conditions evaluates to true, the ```map``` function takes the Double originating from the action linked with that condition and maps it to a ```String```.
 
 ## Terminal operations
-The Conditional contains 3 terminal operations: _applyToOrElse_, _applyToOrElseGet_, _applyToOrElseThrow_. A terminal operation is an operation that marks the end of the Conditional pipeline. When a terminal operation is invoked on a Conditional, it triggers the actual processing of the intermediate operations and produces a result or a side-effect. A Conditional pipeline may only contain one terminal operation, whereas multiple intermediate operations are allowed.
+The Conditional contains 3 terminal operations: ```applyToOrElse```, ```applyToOrElseGet```, ```applyToOrElseThrow```. A terminal operation is an operation that marks the end of the Conditional pipeline. When a terminal operation is invoked on a Conditional, it triggers the actual processing of the intermediate operations and produces a result or a side-effect. A Conditional pipeline may only contain one terminal operation, whereas multiple intermediate operations are allowed.
 
 ### - _applyToOrElse_
-The applyToOrElse method takes 2 arguments: the first is the value that will be processed by the Conditional pipeline, the second a default value that is returned when no condition evaluates to true _or_ if the first argument is null. The second argument is of the same type that would otherwise be returned by the pipeline if any condition in the pipeline evaluates to true. This method is recommended if the default value is already in scope or is a constant. Putting a method call in the second argument is discouraged, since the second argument of this method is not lazy evaluated.  
+- ```applyToOrElse```: takes 2 arguments; the first is the value that will be processed by the Conditional pipeline, the second a default value that is returned when no condition evaluates to true _or_ if the first argument is ```null```. The second argument is of the same type that would otherwise be returned by the pipeline if any condition in the pipeline evaluates to true. This method is recommended if the default value is already in scope or is a constant. Putting a method call in the second argument is discouraged, since the second argument of this method is not _lazy evaluated_.  
 
 ```
     private static final Double ZERO = 0.0;
@@ -134,7 +134,7 @@ The applyToOrElse method takes 2 arguments: the first is the value that will be 
 ```
 
 ### - _applyToOrElseGet_
-The applyToOrElseGet method takes 2 arguments: the first argument is the value that will be processed by the Conditional pipeline, the second a Supplier that is evaluated when no condition evaluates to true _or_ if the first argument is null. The Supplier should return an object of the same type that would otherwise be returned by the pipeline if any condition in the pipeline matches. The second argument to this method is lazy evaluated, and suitable for operations that you would only like to have executed when none of the conditions evaluates to true.
+- ```applyToOrElseGet```: takes 2 arguments; the first argument is the value that will be processed by the Conditional pipeline, the second a ```Supplier``` that is evaluated when no condition evaluates to true _or_ if the first argument is ```null```. The Supplier should return an object of the same type that would otherwise be returned by the pipeline if any condition in the pipeline matches. The second argument to this method is _lazy evaluated_, and suitable for operations that you would only like to have executed when none of the conditions evaluates to true.
 
 ```
     public Double calculateNumber(int number) {
@@ -148,7 +148,7 @@ The applyToOrElseGet method takes 2 arguments: the first argument is the value t
 ```
 
 ### - _applyToOrElseThrow_
-The applyToOrElseThrow method takes 2 arguments: the first argument is the value that will be processed by the Conditional pipeline, the second a Supplier that returns a Throwable that will be thrown if no condition in the pipeline matches. This throwable is also thrown when the first argument (the value to be processed) is null. The second argument to this method is lazy evaluated.
+- ``` applyToOrElseThrow```: takes 2 arguments: the first argument is the value that will be processed by the Conditional pipeline, the second a ```Supplier``` that returns a Throwable that will be thrown if no condition in the pipeline matches. This ```Throwable``` is also thrown when the first argument (the value to be processed) is ```null```. The second argument to this method is _lazy evaluated_.
 
 ```
     public Double calculateNumber(int number) {
