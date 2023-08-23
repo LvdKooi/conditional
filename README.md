@@ -160,3 +160,17 @@ The Conditional contains 3 terminal operations: ```applyToOrElse```, ```applyToO
                 .applyToOrElseThrow(number, CalculationException::new);
     }
 ```
+
+## Installation
+
+**Apache Maven**
+
+If you’re using Maven to build your project, add the following to your pom.xml to use the Conditional:
+
+```		
+<dependency>
+	<groupId>io.github.lvdkooi</groupId>
+	<artifactId>conditional</artifactId>
+	<version>1.0.0</version>
+</dependency>
+```
