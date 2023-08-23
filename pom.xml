@@ -4,7 +4,7 @@
 
     <groupId>io.github.lvdkooi</groupId>
     <artifactId>conditional</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>The Conditional Monad: Structuring Conditional Actions</description>
@@ -28,6 +28,7 @@
         <connection>scm:git:ssh://git@github.com:LvdKooi/conditional.git</connection>
         <developerConnection>scm:git:ssh://git@github.com:LvdKooi/conditional.git</developerConnection>
         <url>http://github.com/LvdKooi/conditional/tree/master</url>
+    <tag>conditional-1.0.0</tag>
   </scm>
 
     <distributionManagement>
