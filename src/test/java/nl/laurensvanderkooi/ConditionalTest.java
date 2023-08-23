@@ -1,4 +1,4 @@
-package nl.kooi;
+package nl.laurensvanderkooi;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

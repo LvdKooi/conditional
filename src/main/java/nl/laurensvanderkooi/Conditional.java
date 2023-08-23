@@ -1,4 +1,4 @@
-package nl.kooi;
+package nl.laurensvanderkooi;
 
 import java.util.ArrayDeque;
 import java.util.Objects;
