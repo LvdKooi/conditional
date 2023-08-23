@@ -37,7 +37,8 @@ This would look like this:
     private static final Double ZERO = 0.0;
 
     public Double calculateNumber(int number) {
-        return Conditional.apply(timesTwoAndAHalf())
+        return Conditional
+                .apply(timesTwoAndAHalf())
                 .when(isEven())
                 .orApply(halfIt())
                 .when(isLargerThan(100))
@@ -123,7 +124,8 @@ The applyToOrElse method takes 2 arguments: the first is the value that will be 
     private static final Double ZERO = 0.0;
 
     public Double calculateNumber(int number) {
-        return Conditional.apply(timesTwoAndAHalf())
+        return Conditional
+                .apply(timesTwoAndAHalf())
                 .when(isEven())
                 .orApply(halfIt())
                 .when(isLargerThan(100))
@@ -136,7 +138,8 @@ The applyToOrElseGet method takes 2 arguments: the first argument is the value t
 
 ```
     public Double calculateNumber(int number) {
-        return Conditional.apply(timesTwoAndAHalf())
+        return Conditional
+                .apply(timesTwoAndAHalf())
                 .when(isEven())
                 .orApply(halfIt())
                 .when(isLargerThan(100))
@@ -149,7 +152,8 @@ The applyToOrElseThrow method takes 2 arguments: the first argument is the value
 
 ```
     public Double calculateNumber(int number) {
-        return Conditional.apply(timesTwoAndAHalf())
+        return Conditional
+                .apply(timesTwoAndAHalf())
                 .when(isEven())
                 .orApply(halfIt())
                 .when(isLargerThan(100))
