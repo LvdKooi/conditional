@@ -6,7 +6,32 @@
 
     <groupId>nl.laurensvanderkooi</groupId>
     <artifactId>conditional</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+    <name>conditional</name>
+    <description>The Conditional Monad: Structuring Conditional Actions</description>
+    <url>https://github.com/LvdKooi/conditional</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Laurens van der Kooi</name>
+            <email>lvvdkooi@gmail.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/LvdKooi/conditional.git</connection>
+        <developerConnection>scm:git:ssh://github.com/LvdKooi/conditional.git</developerConnection>
+        <url>http://github.com/LvdKooi/conditional/tree/master</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
