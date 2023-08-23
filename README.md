@@ -1,4 +1,6 @@
-# The Conditional Monad: Structuring Conditional Actions
+# The Conditional Monad
+
+The Conditional Monad: Structuring Conditional Actions
 
 **Author:** _Laurens van der Kooi_ 
 
