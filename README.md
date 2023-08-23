@@ -113,7 +113,7 @@ In this example, if any of the conditions evaluates to true, the map function ta
 The Conditional contains 3 terminal operations: _applyToOrElse_, _applyToOrElseGet_, _applyToOrElseThrow_. A terminal operation is an operation that marks the end of the Conditional pipeline. When a terminal operation is invoked on a Conditional, it triggers the actual processing of the intermediate operations and produces a result or a side-effect. A Conditional pipeline may only contain one terminal operation, whereas multiple intermediate operations are allowed.
 
 ### applyToOrElse
-The applyToOrElse method takes 2 arguments: the first is the value that will be processed by the Conditional pipeline, the second a default value of the same type that would otherwise be returned by the pipeline if any condition in the pipeline evaluates to true. The default value is also returned when the first argument (the value to be processed) is null. This method is recommended if the default value is already in scope or is a constant. Putting a method call in the second argument is discouraged, since the second argument of this method is not lazy evaluated.  
+The applyToOrElse method takes 2 arguments: the first is the value that will be processed by the Conditional pipeline, the second a default value that is returned when no condition evaluates to true _or_ if the first argument is null. The second argument is of the same type that would otherwise be returned by the pipeline if any condition in the pipeline evaluates to true. This method is recommended if the default value is already in scope or is a constant. Putting a method call in the second argument is discouraged, since the second argument of this method is not lazy evaluated.  
 
 ```
     private static final Double ZERO = 0.0;
@@ -128,7 +128,7 @@ The applyToOrElse method takes 2 arguments: the first is the value that will be 
 ```
 
 ### applyToOrElseGet
-The applyToOrElseGet method takes 2 arguments: the first argument is the value that will be processed by the Conditional pipeline, the second a Supplier that returns an object of the same type that would otherwise be returned by the pipeline if any condition in the pipeline matches. The supplier is also invoked when the first argument (the value to be processed) is null. The second argument to this method is lazy evaluated, and suitable for operations that you would only like to perform when none of the conditions evaluates to true.
+The applyToOrElseGet method takes 2 arguments: the first argument is the value that will be processed by the Conditional pipeline, the second a Supplier that is evaluated when no condition evaluates to true _or_ if the first argument is null. The Supplier should return an object of the same type that would otherwise be returned by the pipeline if any condition in the pipeline matches. The second argument to this method is lazy evaluated, and suitable for operations that you would only like to have executed when none of the conditions evaluates to true.
 
 ```
     public Double calculateNumber(int number) {
