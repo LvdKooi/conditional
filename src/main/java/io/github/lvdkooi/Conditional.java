@@ -1,4 +1,4 @@
-package nl.laurensvanderkooi;
+package io.github.lvdkooi;
 
 import java.util.ArrayDeque;
 import java.util.Objects;
