@@ -1,4 +1,4 @@
-# The Conditional Monad
+# The Conditional
 
 The Conditional: Structuring Conditional Actions In A Monadic Way
 
