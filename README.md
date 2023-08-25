@@ -1,6 +1,6 @@
 # The Conditional Monad
 
-The Conditional Monad: Structuring Conditional Actions
+The Conditional: Structuring Conditional Actions In A Monadic Way
 
 **Author:** _Laurens van der Kooi_ 
 
