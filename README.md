@@ -165,7 +165,7 @@ The Conditional contains 3 terminal operations: ```applyToOrElse```, ```applyToO
 
 **Apache Maven**
 
-If you’re using Maven to build your project, add the following to your pom.xml to use the Conditional:
+If you’re using Maven to build your project, add the following to your ```pom.xml``` to use the Conditional:
 
 ```		
 <dependency>
@@ -173,4 +173,12 @@ If you’re using Maven to build your project, add the following to your pom.xml
 	<artifactId>conditional</artifactId>
 	<version>1.0.0</version>
 </dependency>
+```
+
+**Gradle**
+
+If you’re using Gradle to build your project, add the following to your ```build.gradle``` to use the Conditional:
+
+```
+implementation 'io.github.lvdkooi:conditional:1.0.0'
 ```
