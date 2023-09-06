@@ -16,7 +16,7 @@ An illustrative example is as follows:
         return Conditional
                 .apply((Integer i) -> i * 2.5)
                 .when(i -> i % 2 == 0)
-                .orApply(i -> i / 2.0)
+                .orApply(i -> i * 0.5)
                 .when(i -> i > 100)
                 .applyToOrElse(number, ZERO);
     }
@@ -44,13 +44,13 @@ This would look like this:
                 .when(isLargerThan(100))
                 .applyToOrElse(number, ZERO);
     }
-    
+
     private static Function<Integer, Double> timesTwoAndAHalf() {
         return i -> i * 2.5;
     }
 
     private static Function<Integer, Double> halfIt() {
-        return i -> i / 2.0;
+        return i -> i * 0.5;
     }
 
     private static Predicate<Integer> isEven() {
