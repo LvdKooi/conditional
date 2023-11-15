@@ -1,9 +1,6 @@
 package io.github.lvdkooi;
 
-import java.util.ArrayDeque;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Queue;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -22,27 +19,15 @@ public class Conditional<T, R> {
         return new Conditional<>(new ArrayDeque<>(1), value);
     }
 
-    public <U> Conditional<T, U> mapWhen(Function<T, U> function, Predicate<T> condition) {
-        if (!actionQueue.isEmpty()) {
-            throw new IllegalArgumentException("mapWhen should be the first operation after calling Conditional.of(x)");
-        }
-
+    public static <T, U> Pair<Predicate<T>, Function<T, U>> applyIf(Predicate<T> condition, Function<T, U> function) {
         assertCurrentFunctionAndPredicateAreValid(function, condition);
-
-        var arrayDeque = new ArrayDeque<Pair<Predicate<T>, Function<T, U>>>(1);
-        arrayDeque.add(new Pair<>(condition, function));
-
-        return new Conditional<>(arrayDeque, value);
+        return new Pair<>(condition, function);
     }
 
-    public Conditional<T, R> orMapWhen(Function<T, R> function, Predicate<T> condition) {
-        if (actionQueue.isEmpty()) {
-            throw new IllegalArgumentException("orMapWhen shouldn't be the first operation after calling Conditional.of(x), start with mapWhen instead");
-        }
-
-        assertCurrentFunctionAndPredicateAreValid(function, condition);
-        var arrayDeque = new ArrayDeque<>(actionQueue);
-        arrayDeque.add(new Pair<>(condition, function));
+    @SafeVarargs
+    public final <U> Conditional<T, U> firstMatching(Pair<Predicate<T>, Function<T, U>>... actions) {
+        var arrayDeque = Arrays.stream(actions)
+                .collect(Collectors.toCollection(ArrayDeque::new));
 
         return new Conditional<>(arrayDeque, value);
     }
@@ -91,14 +76,14 @@ public class Conditional<T, R> {
                 .map(Pair::value);
     }
 
-    private <U> void assertCurrentFunctionAndPredicateAreValid(Function<T, U> function, Predicate<T> predicate) {
+    private static <T, U> void assertCurrentFunctionAndPredicateAreValid(Function<T, U> function, Predicate<T> predicate) {
         Objects.requireNonNull(function);
         Objects.requireNonNull(predicate);
     }
 
-    private record Pair<T, R>(T key, R value) {
+    public record Pair<T, R>(T key, R value) {
 
-        private Pair {
+        public Pair {
             Objects.requireNonNull(key);
             Objects.requireNonNull(value);
         }
