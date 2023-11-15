@@ -13,250 +13,247 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ConditionalTest {
 
     @Nested
-    @DisplayName("Tests for conditionals with applyToOrElse")
-    class applyToOrElse {
+    @DisplayName("Tests for conditionals with orElse")
+    class orElse {
 
         @Test
-        @DisplayName("applyToOrElse: when a condition matches, then the matching function is applied to the object.")
+        @DisplayName("orElse: when a condition matches, then the matching function is applied to the object.")
         void conditionalWithOneConditionThatEvaluatesToTrue() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
-                    .applyToOrElse(2, 0);
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(2)
+                    .orElse(0);
 
             assertThat(outcome).isEqualTo(4);
         }
 
         @Test
-        @DisplayName("applyToOrElse: when no condition matches, then the default value is returned.")
+        @DisplayName("orElse: when no condition matches, then the default value is returned.")
         void conditionalWithOneConditionThatEvaluatesToFalse() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
-                    .applyToOrElse(3, 0);
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
+                    .orElse(0);
 
             assertThat(outcome).isEqualTo(0);
         }
 
         @Test
-        @DisplayName("applyToOrElse: when a condition matches and the Conditional pipeline contains a map, then the matching function is first applied and then the map function is applied to the object.")
+        @DisplayName("orElse: when a condition matches and the Conditional pipeline contains a map, then the matching function is first applied and then the map function is applied to the object.")
         void conditionalWithOneConditionThatEvaluatesToTrue_applyingMap() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(2)
                     .map(i -> String.format("And the number is: %d", i))
-                    .applyToOrElse(2, "No outcome");
+                    .orElse("No outcome");
 
             assertThat(outcome).isEqualTo("And the number is: 4");
         }
 
         @Test
-        @DisplayName("applyToOrElse: when no condition matches and the Conditional pipeline contains a map, then the default value is returned.")
+        @DisplayName("orElse: when no condition matches and the Conditional pipeline contains a map, then the default value is returned.")
         void conditionalWithOneConditionThatEvaluatesToFalse_ignoringMap() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
                     .map(i -> String.format("And the number is: %d", i))
-                    .applyToOrElse(3, "No outcome");
+                    .orElse("No outcome");
 
             assertThat(outcome).isEqualTo("No outcome");
         }
 
         @Test
-        @DisplayName("applyToOrElse: when a condition matches and the matching function evaluates to null, then a null is being returned and the default value is ignored.")
+        @DisplayName("orElse: when a condition matches and the matching function evaluates to null, then a null is being returned and the default value is ignored.")
         void conditionalWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull() {
-            var outcome = Conditional
-                    .apply((Integer i) -> null)
-                    .when(isEven())
-                    .applyToOrElse(2, 0);
+            var outcome = Conditional.of(2)
+                    .mapWhen((Integer i) -> null, isEven())
+                    .orElse(0);
 
             assertThat(outcome).isNull();
         }
 
         @Test
-        @DisplayName("applyToOrElse: when a null is passed as the object to be evaluated, then the default value is returned.")
-        void conditionalPassingInANull_applyingOrElse() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
-                    .applyToOrElse(null, 0);
+        @DisplayName("orElse: when a null is passed as the object to be evaluated, then the default value is returned.")
+        void conditionalPassingInANull_orElse() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(null)
+                    .orElse(0);
 
             assertThat(outcome).isEqualTo(0);
         }
 
         @Test
-        @DisplayName("applyToOrElse: when no condition matches and the default value is null, then this default value is returned.")
-        void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseWithNull() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
-                    .applyToOrElse(3, null);
+        @DisplayName("orElse: when no condition matches and the default value is null, then this default value is returned.")
+        void conditionalWithOneConditionThatEvaluatesToFalse_orElseWithNull() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
+                    .orElse(null);
 
             assertThat(outcome).isNull();
         }
 
         @Test
-        @DisplayName("applyToOrElse: when multiple conditions would return true, then only the function belonging to the first condition that evaluated to true is applied.")
+        @DisplayName("orElse: when multiple conditions would return true, then only the function belonging to the first condition that evaluated to true is applied.")
         void conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated() {
-            var outcome = conditionalWithMultipleConditionsThatEvaluateToTrue()
-                    .applyToOrElse(0, 9);
+            var outcome = conditionalWithMultipleConditionsThatEvaluateToTrue(0)
+                    .orElse(9);
 
             assertThat(outcome).isEqualTo(3);
         }
 
         @Test
-        @DisplayName("applyToOrElse: when the Conditional pipeline contain multiple conditions that all evaluate to false, then the default value is returned.")
+        @DisplayName("orElse: when the Conditional pipeline contain multiple conditions that all evaluate to false, then the default value is returned.")
         void conditionalWithMultipleConditionsThatAllEvaluateToFalse() {
-            var outcome = conditionalWithMultipleConditionsThatEvaluateToFalse()
-                    .applyToOrElse(0, 9);
+            var outcome = conditionalWithMultipleConditionsThatEvaluateToFalse(0)
+                    .orElse(9);
 
             assertThat(outcome).isEqualTo(9);
         }
     }
 
     @Nested
-    @DisplayName("Tests for conditionals with applyToOrElseGet")
-    class applyToOrElseGet {
+    @DisplayName("Tests for conditionals with orElseGet")
+    class orElseGet {
 
         @Test
-        @DisplayName("applyToOrElseGet: when a condition matches, then the matching function is applied to the object.")
+        @DisplayName("orElseGet: when a condition matches, then the matching function is applied to the object.")
         void conditionalWithOneConditionThatEvaluatesTTrue() {
-            var outcome = Conditional
-                    .apply((Integer integer) -> integer.toString())
-                    .when(isEven())
-                    .applyToOrElseGet(2, () -> "hello world");
+            var outcome = Conditional.of(2)
+                    .mapWhen(Object::toString, isEven())
+                    .orElseGet(() -> "hello world");
 
             assertThat(outcome).isEqualTo("2");
         }
 
         @Test
-        @DisplayName("applyToOrElseGet: when no condition matches, then the value evaluated from the default Supplier is returned.")
+        @DisplayName("orElseGet: when no condition matches, then the value evaluated from the default Supplier is returned.")
         void conditionalWithOneConditionThatEvaluatesToFalse() {
-            var outcome = Conditional
-                    .apply((Integer integer) -> integer.toString())
-                    .when(isEven().negate())
-                    .applyToOrElseGet(2, () -> "hello world");
+            var outcome = Conditional.of(2)
+                    .mapWhen(Object::toString, isEven().negate())
+                    .orElseGet(() -> "hello world");
 
             assertThat(outcome).isEqualTo("hello world");
         }
 
         @Test
-        @DisplayName("applyToOrElseGet: when a condition matches and the Conditional pipeline contains a map, then the matching function is first applied and then the map function is applied to the object.")
+        @DisplayName("orElseGet: when a condition matches and the Conditional pipeline contains a map, then the matching function is first applied and then the map function is applied to the object.")
         void conditionalWithOneConditionThatEvaluatesToTrue_applyingMap() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(2)
                     .map(i -> String.format("And the number is: %d", i))
-                    .applyToOrElseGet(2, () -> "No outcome");
+                    .orElseGet(() -> "No outcome");
 
             assertThat(outcome).isEqualTo("And the number is: 4");
         }
 
         @Test
-        @DisplayName("applyToOrElseGet: when no condition matches and the Conditional pipeline contains a map, then the value evaluated from the default Supplier is returned.")
+        @DisplayName("orElseGet: when no condition matches and the Conditional pipeline contains a map, then the value evaluated from the default Supplier is returned.")
         void conditionalWithOneConditionThatEvaluatesToFalse_ignoringMap() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
                     .map(i -> String.format("And the number is: %d", i))
-                    .applyToOrElseGet(3, () -> "No outcome");
+                    .orElseGet(() -> "No outcome");
 
             assertThat(outcome).isEqualTo("No outcome");
         }
 
         @Test
-        @DisplayName("applyToOrElseGet: when a null is passed as the object to be evaluated, then the value evaluated from the default Supplier is returned.")
-        void conditionalPassingInANull_applyingOrElse() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
-                    .applyToOrElseGet(null, () -> 0);
+        @DisplayName("orElseGet: when a null is passed as the object to be evaluated, then the value evaluated from the default Supplier is returned.")
+        void conditionalPassingInANull_orElseGet() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(null)
+                    .orElseGet(() -> 0);
 
             assertThat(outcome).isEqualTo(0);
         }
 
         @Test
-        @DisplayName("applyToOrElseGet: when no condition matches and the default Supplier evaluates to null, then this null is returned.")
-        void conditionalWithOneConditionThatEvaluatesToFalse_applyingOrElseGetReturningNull() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
-                    .applyToOrElseGet(3, () -> null);
+        @DisplayName("orElseGet: when no condition matches and the default Supplier evaluates to null, then this null is returned.")
+        void conditionalWithOneConditionThatEvaluatesToFalse_orElseGetReturningNull() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
+                    .orElseGet(() -> null);
 
             assertThat(outcome).isNull();
         }
 
         @Test
-        @DisplayName("applyToOrElseGet: when a condition matches and the matching function evaluates to null, then a null is being returned and the default Supplier is ignored.")
+        @DisplayName("orElseGet: when a condition matches and the matching function evaluates to null, then a null is being returned and the default Supplier is ignored.")
         void conditionalWithOneConditionThatEvaluatesToTrue_applyingFunctionThatReturnsNull() {
-            var outcome = Conditional
-                    .apply((Integer integer) -> null)
-                    .when(isEven())
-                    .applyToOrElseGet(2, () -> "hello world");
+            var outcome = Conditional.of(2)
+                    .mapWhen(i -> null, isEven())
+                    .orElseGet(() -> "hello world");
 
             assertThat(outcome).isNull();
         }
 
         @Test
-        @DisplayName("applyToOrElseGet: when multiple conditions would return true, then only the function belonging to the first condition that evaluated to true is applied.")
+        @DisplayName("orElseGet: when multiple conditions would return true, then only the function belonging to the first condition that evaluated to true is applied.")
         void conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated() {
-            var outcome = conditionalWithMultipleConditionsThatEvaluateToTrue()
-                    .applyToOrElseGet(0, () -> 9);
+            var outcome = conditionalWithMultipleConditionsThatEvaluateToTrue(0)
+                    .orElseGet(() -> 9);
 
             assertThat(outcome).isEqualTo(3);
         }
 
         @Test
-        @DisplayName("applyToOrElseGet: when the Conditional pipeline contain multiple conditions that all evaluate to false, then the value evaluated from the default Supplier is returned.")
+        @DisplayName("orElseGet: when the Conditional pipeline contain multiple conditions that all evaluate to false, then the value evaluated from the default Supplier is returned.")
         void conditionalWithMultipleConditionsThatAllEvaluateToFalse() {
-            var outcome = conditionalWithMultipleConditionsThatEvaluateToFalse()
-                    .applyToOrElseGet(0, () -> 9);
+            var outcome = conditionalWithMultipleConditionsThatEvaluateToFalse(0)
+                    .orElseGet(() -> 9);
 
             assertThat(outcome).isEqualTo(9);
         }
     }
 
     @Nested
-    @DisplayName("Tests for conditionals with applyToOrElseThrow")
-    class applyToOrElseThrow {
+    @DisplayName("Tests for conditionals with orElseThrow")
+    class orElseThrow {
+
         @Test
-        @DisplayName("applyToOrElseThrow: when a condition matches, then the matching function is applied to the object.")
+        @DisplayName("orElseThrow: when a condition matches, then the matching function is applied to the object.")
         void conditionalWithOneConditionThatEvaluatesToTrue() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
-                    .applyToOrElseThrow(2, IllegalArgumentException::new);
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(2)
+                    .orElseThrow(IllegalArgumentException::new);
 
             assertThat(outcome).isEqualTo(4);
         }
 
         @Test
-        @DisplayName("applyToOrElseThrow: when no condition matches, then the exception supplier is evaluated (throwing an exception).")
+        @DisplayName("orElseThrow: when no condition matches, then the exception supplier is evaluated (throwing an exception).")
         void conditionalWithOneConditionThatEvaluatesToFalse() {
             assertThrows(IllegalArgumentException.class, () ->
-                    conditionalThatMultipliesBy2WhenNumberIsEven()
-                            .applyToOrElseThrow(3, IllegalArgumentException::new));
+                    conditionalThatMultipliesBy2WhenNumberIsEven(3)
+                            .orElseThrow(IllegalArgumentException::new));
         }
 
         @Test
-        @DisplayName("applyToOrElseThrow: when a condition matches and the Conditional pipeline contains a map, then the matching function is first applied and then the map function is applied to the object.")
+        @DisplayName("orElseThrow: when a condition matches and the Conditional pipeline contains a map, then the matching function is first applied and then the map function is applied to the object.")
         void conditionalWithOneConditionThatEvaluatesToTrue_applyingMap() {
-            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven()
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(2)
                     .map(i -> String.format("And the number is: %d", i))
-                    .applyToOrElseThrow(2, IllegalArgumentException::new);
+                    .orElseThrow(IllegalArgumentException::new);
 
             assertThat(outcome).isEqualTo("And the number is: 4");
         }
 
         @Test
-        @DisplayName("applyToOrElseThrow: when no condition matches and the Conditional pipeline contains a map, then the exception supplier is evaluated (throwing an exception).")
+        @DisplayName("orElseThrow: when no condition matches and the Conditional pipeline contains a map, then the exception supplier is evaluated (throwing an exception).")
         void conditionalWithOneConditionThatEvaluatesToFalse_ignoringMap() {
             assertThrows(IllegalArgumentException.class, () ->
-                    conditionalThatMultipliesBy2WhenNumberIsEven()
+                    conditionalThatMultipliesBy2WhenNumberIsEven(3)
                             .map(i -> String.format("And the number is: %d", i))
-                            .applyToOrElseThrow(3, IllegalArgumentException::new));
+                            .orElseThrow(IllegalArgumentException::new));
         }
 
         @Test
-        @DisplayName("applyToOrElseThrow: when a null is passed as the object to be evaluated, then the exception supplier is evaluated (throwing an exception).")
+        @DisplayName("orElseThrow: when a null is passed as the object to be evaluated, then the exception supplier is evaluated (throwing an exception).")
         void conditionalPassingInANull() {
             assertThrows(IllegalArgumentException.class, () ->
-                    conditionalThatMultipliesBy2WhenNumberIsEven()
-                            .applyToOrElseThrow(null, IllegalArgumentException::new));
+                    conditionalThatMultipliesBy2WhenNumberIsEven(null)
+                            .orElseThrow(IllegalArgumentException::new));
         }
 
         @Test
-        @DisplayName("applyToOrElseThrow: when multiple conditions would return true, then only the function belonging to the first condition that evaluated to true is applied.")
+        @DisplayName("orElseThrow: when multiple conditions would return true, then only the function belonging to the first condition that evaluated to true is applied.")
         void conditionalWithMultipleConditionsThatEvaluateToTrue_functionOfFirstTrueIsEvaluated() {
-            var outcome = conditionalWithMultipleConditionsThatEvaluateToTrue()
-                    .applyToOrElseThrow(0, IllegalArgumentException::new);
+            var outcome = conditionalWithMultipleConditionsThatEvaluateToTrue(0)
+                    .orElseThrow(IllegalArgumentException::new);
 
             assertThat(outcome).isEqualTo(3);
         }
 
         @Test
-        @DisplayName("applyToOrElseThrow: when the Conditional pipeline contain multiple conditions that all evaluate to false, then the exception supplier is evaluated (throwing an exception).")
+        @DisplayName("orElseThrow: when the Conditional pipeline contain multiple conditions that all evaluate to false, then the exception supplier is evaluated (throwing an exception).")
         void conditionalWithMultipleConditionsThatAllEvaluateToFalse() {
-            assertThrows(IllegalArgumentException.class, () -> conditionalWithMultipleConditionsThatEvaluateToFalse()
-                    .applyToOrElseThrow(0, IllegalArgumentException::new));
+            assertThrows(IllegalArgumentException.class, () -> conditionalWithMultipleConditionsThatEvaluateToFalse(0)
+                    .orElseThrow(IllegalArgumentException::new));
         }
     }
 
@@ -265,88 +262,87 @@ class ConditionalTest {
     class ExceptionHandlingTests {
 
         @Test
-        @DisplayName("Exception Handling: when a when is placed before orApply in the Conditional pipeline, an NPE is thrown containing a clear message.")
-        void whenShouldNotBePlacedBeforeOrApply() {
-            assertThat(assertThrows(NullPointerException.class, () -> Conditional.apply((Integer i) -> i * i)
-                    .when(returnTrue())
-                    .when(returnTrue())
-                    .orApply(i -> i * 2)
-                    .applyToOrElse(1, 3456)).getMessage())
-                    .isEqualTo("The function that belongs to this condition is not yet set. A predicate can " +
-                            "only be added after an apply(Function<T, R> function) or orApply(Function<T, R> function).");
+        @DisplayName("Exception Handling: when a orMapWhen is placed before mapWhen in the Conditional pipeline, an IllegalArgumentException is thrown containing a clear message.")
+        void orMapWhenShouldNotBePlacedBeforeMapWhen() {
+            assertThat(assertThrows(IllegalArgumentException.class, () -> Conditional.of(1)
+                    .orMapWhen(timesTwo(), returnTrue())
+                    .mapWhen(square(), returnFalse())
+                    .orElse(3456)).getMessage())
+                    .isEqualTo("orMapWhen shouldn't be the first operation after calling Conditional.of(x), start with mapWhen instead");
         }
 
         @Test
-        @DisplayName("Exception Handling: when a when containing null is added to the Conditional pipeline, an NPE is thrown.")
+        @DisplayName("Exception Handling: when a null is passed as the second parameter of a mapWhen, an NPE is thrown.")
         void predicateShouldNotBeNull() {
-            assertThrows(NullPointerException.class, () -> Conditional.apply((Integer i) -> i * i)
-                    .when(null)
-                    .applyToOrElse(1, 3456));
+            assertThrows(NullPointerException.class, () -> Conditional.of(1)
+                    .mapWhen(square(), null)
+                    .orElse(3456));
         }
 
         @Test
-        @DisplayName("Exception Handling: when an orApply containing null is added to the Conditional pipeline, an NPE is thrown.")
-        void functionShouldNotBeNull_orApply() {
-            assertThrows(NullPointerException.class, () -> Conditional.apply((Integer i) -> i * 2)
-                    .when(returnTrue())
-                    .orApply(null)
-                    .when(returnFalse())
-                    .applyToOrElse(1, 3456));
+        @DisplayName("Exception Handling: when an orMapWhen containing null is added to the Conditional pipeline, an NPE is thrown.")
+        void functionShouldNotBeNull_orMapWhen() {
+            assertThrows(NullPointerException.class, () -> Conditional.of(1)
+                    .mapWhen(timesTwo(), returnTrue())
+                    .orMapWhen(null, returnFalse())
+                    .orElse(3456));
         }
 
         @Test
-        @DisplayName("Exception Handling: when the Conditional pipeline starts with an apply containing null, an NPE is thrown.")
-        void functionShouldNotBeNull_apply() {
-            assertThrows(NullPointerException.class, () -> Conditional.apply(null)
-                    .when(null)
-                    .orApply(null)
-                    .when(null)
-                    .applyToOrElse(1, 3456));
+        @DisplayName("Exception Handling: when the Conditional pipeline starts with an.mapWhen containing null, an NPE is thrown.")
+        void functionShouldNotBeNullmapWhen() {
+            assertThrows(NullPointerException.class, () -> Conditional
+                    .of(1).mapWhen(null, null)
+                    .orMapWhen(null, null)
+                    .orElse(3456));
         }
 
         @Test
-        @DisplayName("Exception Handling: when the Conditional pipeline contains an applyToOrElseThrow containing a null throwableSupplier, an NPE is thrown.")
+        @DisplayName("Exception Handling: when the Conditional pipeline contains an orElseThrow containing a null throwableSupplier, an NPE is thrown.")
         void conditionalWithOneConditionThatEvaluatesToFalse_passingNullThrowableSupplierToOrElseThrow() {
-            assertThrows(NullPointerException.class, () -> conditionalThatMultipliesBy2WhenNumberIsEven()
-                    .applyToOrElseThrow(3, null));
+            assertThrows(NullPointerException.class, () -> conditionalThatMultipliesBy2WhenNumberIsEven(3)
+                    .orElseThrow(null));
         }
 
         @Test
-        @DisplayName("Exception Handling: when the Conditional pipeline contains an applyToOrElseGet containing a null Supplier, an NPE is thrown.")
+        @DisplayName("Exception Handling: when the Conditional pipeline contains an orElseGet containing a null Supplier, an NPE is thrown.")
         void conditionalWithOneConditionThatEvaluatesToFalse_passingNullSupplierToOrElseGet() {
-            assertThrows(NullPointerException.class, () -> conditionalThatMultipliesBy2WhenNumberIsEven()
-                    .applyToOrElseGet(3, null));
+            assertThrows(NullPointerException.class, () -> conditionalThatMultipliesBy2WhenNumberIsEven(3)
+                    .orElseGet(null));
         }
     }
 
-    private static Conditional<Integer, Integer> conditionalWithMultipleConditionsThatEvaluateToTrue() {
-        return Conditional
-                .apply(plus(1)).when(returnFalse())
-                .orApply(plus(2)).when(returnFalse())
-                .orApply(plus(3)).when(returnTrue())
-                .orApply(plus(4)).when(returnTrue())
-                .orApply(plus(5)).when(returnTrue())
-                .orApply(plus(6)).when(returnFalse());
+    private static Conditional<Integer, Integer> conditionalWithMultipleConditionsThatEvaluateToTrue(Integer number) {
+        return Conditional.of(number)
+                .mapWhen(plus(1), returnFalse())
+                .orMapWhen(plus(2), returnFalse())
+                .orMapWhen(plus(3), returnTrue())
+                .orMapWhen(plus(4), returnTrue())
+                .orMapWhen(plus(5), returnTrue())
+                .orMapWhen(plus(6), returnFalse());
     }
 
-    private static Conditional<Integer, Integer> conditionalWithMultipleConditionsThatEvaluateToFalse() {
-        return Conditional
-                .apply(plus(1)).when(returnFalse())
-                .orApply(plus(2)).when(returnFalse())
-                .orApply(plus(3)).when(returnFalse())
-                .orApply(plus(4)).when(returnFalse())
-                .orApply(plus(5)).when(returnFalse())
-                .orApply(plus(6)).when(returnFalse());
+    private static Conditional<Integer, Integer> conditionalWithMultipleConditionsThatEvaluateToFalse(Integer number) {
+        return Conditional.of(number)
+                .mapWhen(plus(1), returnFalse())
+                .orMapWhen(plus(2), returnFalse())
+                .orMapWhen(plus(3), returnFalse())
+                .orMapWhen(plus(4), returnFalse())
+                .orMapWhen(plus(5), returnFalse())
+                .orMapWhen(plus(6), returnFalse());
     }
 
-    private static Conditional<Integer, Integer> conditionalThatMultipliesBy2WhenNumberIsEven() {
-        return Conditional
-                .apply(timesTwo())
-                .when(isEven());
+    private static Conditional<Integer, Integer> conditionalThatMultipliesBy2WhenNumberIsEven(Integer number) {
+        return Conditional.of(number)
+                .mapWhen(timesTwo(), isEven());
     }
 
     private static UnaryOperator<Integer> timesTwo() {
         return i -> i * 2;
+    }
+
+    private static UnaryOperator<Integer> square() {
+        return i -> i * i;
     }
 
     private static Predicate<Integer> isEven() {
