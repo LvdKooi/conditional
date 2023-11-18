@@ -57,6 +57,26 @@ class ConditionalTest {
         }
 
         @Test
+        @DisplayName("orElse: when a condition matches and the Conditional pipeline contains a flatMap, then the matching function is first applied and then the flatMap function is applied to the object.")
+        void conditionalWithOneConditionThatEvaluatesToTrue_applyingFlatMap() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(2)
+                    .flatMap(ConditionalTest::conditionalThatMultipliesBy2WhenNumberIsEven)
+                    .orElse(0);
+
+            assertThat(outcome).isEqualTo(8);
+        }
+
+        @Test
+        @DisplayName("orElse: when no condition matches and the Conditional pipeline contains a flatMap, then the default value is returned.")
+        void conditionalWithOneConditionThatEvaluatesToFalse_ignoringFlatMap() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
+                    .flatMap(ConditionalTest::conditionalThatMultipliesBy2WhenNumberIsEven)
+                    .orElse(0);
+
+            assertThat(outcome).isEqualTo(0);
+        }
+
+        @Test
         @DisplayName("orElse: when a condition matches and the matching function evaluates to null, then a null is being returned and the default value is ignored.")
         void conditionalWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull() {
             var outcome = Conditional.of(2)
@@ -109,7 +129,7 @@ class ConditionalTest {
 
         @Test
         @DisplayName("orElseGet: when a condition matches, then the matching function is applied to the object.")
-        void conditionalWithOneConditionThatEvaluatesTTrue() {
+        void conditionalWithOneConditionThatEvaluatesToTrue() {
             var outcome = Conditional.of(2)
                     .firstMatching(applyIf(isEven(), Objects::toString))
                     .orElseGet(() -> "hello world");
@@ -145,6 +165,26 @@ class ConditionalTest {
                     .orElseGet(() -> "No outcome");
 
             assertThat(outcome).isEqualTo("No outcome");
+        }
+
+        @Test
+        @DisplayName("orElseGet: when a condition matches and the Conditional pipeline contains a flatMap, then the matching function is first applied and then the flatMap function is applied to the object.")
+        void conditionalWithOneConditionThatEvaluatesToTrue_applyingFlatMap() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(2)
+                    .flatMap(ConditionalTest::conditionalThatMultipliesBy2WhenNumberIsEven)
+                    .orElseGet(() -> 0);
+
+            assertThat(outcome).isEqualTo(8);
+        }
+
+        @Test
+        @DisplayName("orElseGet: when no condition matches and the Conditional pipeline contains a flatMap, then the value evaluated from the default Supplier is returned.")
+        void conditionalWithOneConditionThatEvaluatesToFalse_ignoringFlatMap() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
+                    .flatMap(ConditionalTest::conditionalThatMultipliesBy2WhenNumberIsEven)
+                    .orElseGet(() -> 0);
+
+            assertThat(outcome).isEqualTo(0);
         }
 
         @Test
@@ -235,6 +275,25 @@ class ConditionalTest {
         }
 
         @Test
+        @DisplayName("orElseThrow: when a condition matches and the Conditional pipeline contains a map, then the matching function is first applied and then the map function is applied to the object.")
+        void conditionalWithOneConditionThatEvaluatesToTrue_applyingFlatMap() {
+            var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(2)
+                    .flatMap(ConditionalTest::conditionalThatMultipliesBy2WhenNumberIsEven)
+                    .orElseThrow(IllegalArgumentException::new);
+
+            assertThat(outcome).isEqualTo(8);
+        }
+
+        @Test
+        @DisplayName("orElseThrow: when no condition matches and the Conditional pipeline contains a map, then the exception supplier is evaluated (throwing an exception).")
+        void conditionalWithOneConditionThatEvaluatesToFalse_ignoringFlatMap() {
+            assertThrows(IllegalArgumentException.class, () ->
+                    conditionalThatMultipliesBy2WhenNumberIsEven(3)
+                            .flatMap(ConditionalTest::conditionalThatMultipliesBy2WhenNumberIsEven)
+                            .orElseThrow(IllegalArgumentException::new));
+        }
+
+        @Test
         @DisplayName("orElseThrow: when a null is passed as the object to be evaluated, then the exception supplier is evaluated (throwing an exception).")
         void conditionalPassingInANull() {
             assertThrows(IllegalArgumentException.class, () ->
@@ -304,6 +363,22 @@ class ConditionalTest {
         void conditionalWithOneConditionThatEvaluatesToFalse_passingNullSupplierToOrElseGet() {
             assertThrows(NullPointerException.class, () -> conditionalThatMultipliesBy2WhenNumberIsEven(3)
                     .orElseGet(null));
+        }
+
+        @Test
+        @DisplayName("Exception Handling: when a null is passed to map, an NPE is thrown.")
+        void conditionalWithOneConditionThatEvaluatesToTrue_passingNullToMap() {
+            assertThrows(NullPointerException.class, () -> conditionalThatMultipliesBy2WhenNumberIsEven(2)
+                    .map(null)
+                    .orElse("No outcome"));
+        }
+
+        @Test
+        @DisplayName("Exception Handling: when a null is passed to flatMap, an NPE is thrown.")
+        void conditionalWithOneConditionThatEvaluatesToTrue_passingNullToFlatMap() {
+            assertThrows(NullPointerException.class, () -> conditionalThatMultipliesBy2WhenNumberIsEven(2)
+                    .flatMap(null)
+                    .orElse("No outcome"));
         }
     }
 

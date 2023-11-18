@@ -15,6 +15,10 @@ public class Conditional<T, R> {
         this.value = value;
     }
 
+    private static <T, R> Conditional<T, R> empty() {
+        return new Conditional<>(new ArrayDeque<>(), null);
+    }
+
     public static <T> Conditional<T, T> of(T value) {
         return new Conditional<>(new ArrayDeque<>(1), value);
     }
@@ -43,6 +47,19 @@ public class Conditional<T, R> {
         return new Conditional<>(queue, value);
     }
 
+    public <U> Conditional<R, U> flatMap(Function<R, Conditional<R, U>> flatMapFunction) {
+        Objects.requireNonNull(flatMapFunction);
+
+        var queue = this.actionQueue
+                .stream()
+                .map(pair -> new Pair<>(pair.key(), pair.value().andThen(flatMapFunction)))
+                .collect(Collectors.toCollection(ArrayDeque::new));
+
+        return findMatchingFunction(queue, this.value)
+                .map(function -> function.apply(this.value))
+                .orElseGet(Conditional::empty);
+    }
+
     public R orElseGet(Supplier<? extends R> supplier) {
         Objects.requireNonNull(supplier);
 
@@ -68,12 +85,16 @@ public class Conditional<T, R> {
                 .apply(value);
     }
 
-    private Optional<Function<T, R>> findMatchingFunction(T t) {
+    private static <T, R> Optional<Function<T, R>> findMatchingFunction(Queue<Pair<Predicate<T>, Function<T, R>>> actionQueue, T t) {
         return actionQueue
                 .stream()
                 .filter(entry -> entry.key().test(t))
                 .findFirst()
                 .map(Pair::value);
+    }
+
+    private Optional<Function<T, R>> findMatchingFunction(T t) {
+        return findMatchingFunction(this.actionQueue, t);
     }
 
     private static <T, U> void assertCurrentFunctionAndPredicateAreValid(Function<T, U> function, Predicate<T> predicate) {
