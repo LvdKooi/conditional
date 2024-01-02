@@ -25,16 +25,15 @@ public class Conditional<S, T> {
     }
 
     public static <S, U> ConditionalAction<S, U> applyIf(Predicate<S> condition, Function<S, U> function) {
-        assertCurrentFunctionAndPredicateAreValid(function, condition);
         return new ConditionalAction<>(condition, function);
     }
 
     @SafeVarargs
     public final <U> Conditional<S, U> firstMatching(ConditionalAction<S, U>... actions) {
-        var arrayDeque = Arrays.stream(actions)
+        var updatedActionMap = Arrays.stream(actions)
                 .collect(Collectors.toMap(ConditionalAction::condition, ConditionalAction::action, (x, y) -> x, LinkedHashMap::new));
 
-        return new Conditional<>(arrayDeque, value);
+        return new Conditional<>(updatedActionMap, value);
     }
 
     public <U> Conditional<S, U> map(Function<T, U> mapFunction) {
@@ -99,11 +98,6 @@ public class Conditional<S, T> {
 
     private Optional<Function<S, T>> findMatchingFunction(S value) {
         return findMatchingFunction(this.actionMap, value);
-    }
-
-    private static <S, U> void assertCurrentFunctionAndPredicateAreValid(Function<S, U> function, Predicate<S> predicate) {
-        Objects.requireNonNull(function);
-        Objects.requireNonNull(predicate);
     }
 
     public record ConditionalAction<S, T>(Predicate<S> condition, Function<S, T> action) {
