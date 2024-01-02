@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class Conditional<S, T> {
 
@@ -30,8 +29,7 @@ public class Conditional<S, T> {
 
     @SafeVarargs
     public final <U> Conditional<S, U> firstMatching(ConditionalAction<S, U>... actions) {
-        var actionsAsList = Arrays.stream(actions)
-                .collect(Collectors.toCollection(ArrayList::new));
+        var actionsAsList = Arrays.stream(actions).toList();
 
         return new Conditional<>(actionsAsList, value);
     }
@@ -42,7 +40,7 @@ public class Conditional<S, T> {
         var updatedConditionalActions = this.conditionalActions
                 .stream()
                 .map(conditionalAction -> new ConditionalAction<>(conditionalAction.condition(), conditionalAction.action().andThen(mapFunction)))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .toList();
 
         return new Conditional<>(updatedConditionalActions, value);
     }
@@ -53,7 +51,7 @@ public class Conditional<S, T> {
         var updatedConditionalActions = this.conditionalActions
                 .stream()
                 .map(conditionalAction -> new ConditionalAction<>(conditionalAction.condition(), conditionalAction.action().andThen(flatMapFunction)))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .toList();
 
         return findMatchingFunction(updatedConditionalActions, this.value)
                 .map(function -> function.apply(this.value))
@@ -81,8 +79,7 @@ public class Conditional<S, T> {
 
         return Optional.ofNullable(value)
                 .flatMap(this::findMatchingFunction)
-                .orElseThrow(throwableSupplier)
-                .apply(value);
+                .orElseThrow(throwableSupplier).apply(value);
     }
 
     private static <S, T> Optional<Function<S, T>> findMatchingFunction(List<ConditionalAction<S, T>> conditionalActions, S value) {
