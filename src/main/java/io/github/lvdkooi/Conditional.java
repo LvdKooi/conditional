@@ -8,20 +8,20 @@ import java.util.stream.Collectors;
 
 public class Conditional<S, T> {
 
-    private final Queue<ConditionalAction<S, T>> actionQueue;
+    private final List<ConditionalAction<S, T>> conditionalActions;
     private final S value;
 
-    private Conditional(Queue<ConditionalAction<S, T>> actionQueue, S value) {
-        this.actionQueue = actionQueue;
+    private Conditional(List<ConditionalAction<S, T>> conditionalActions, S value) {
+        this.conditionalActions = conditionalActions;
         this.value = value;
     }
 
     private static <S, T> Conditional<S, T> empty() {
-        return new Conditional<>(new ArrayDeque<>(), null);
+        return new Conditional<>(new ArrayList<>(), null);
     }
 
     public static <S> Conditional<S, S> of(S value) {
-        return new Conditional<>(new ArrayDeque<>(1), value);
+        return new Conditional<>(new ArrayList<>(), value);
     }
 
     public static <S, U> ConditionalAction<S, U> applyIf(Predicate<S> condition, Function<S, U> function) {
@@ -30,32 +30,32 @@ public class Conditional<S, T> {
 
     @SafeVarargs
     public final <U> Conditional<S, U> firstMatching(ConditionalAction<S, U>... actions) {
-        var arrayDeque = Arrays.stream(actions)
-                .collect(Collectors.toCollection(ArrayDeque::new));
+        var actionsAsList = Arrays.stream(actions)
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        return new Conditional<>(arrayDeque, value);
+        return new Conditional<>(actionsAsList, value);
     }
 
     public <U> Conditional<S, U> map(Function<T, U> mapFunction) {
         Objects.requireNonNull(mapFunction);
 
-        var queue = this.actionQueue
+        var updatedConditionalActions = this.conditionalActions
                 .stream()
                 .map(conditionalAction -> new ConditionalAction<>(conditionalAction.condition(), conditionalAction.action().andThen(mapFunction)))
-                .collect(Collectors.toCollection(ArrayDeque::new));
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        return new Conditional<>(queue, value);
+        return new Conditional<>(updatedConditionalActions, value);
     }
 
     public <U> Conditional<T, U> flatMap(Function<T, Conditional<T, U>> flatMapFunction) {
         Objects.requireNonNull(flatMapFunction);
 
-        var queue = this.actionQueue
+        var updatedConditionalActions = this.conditionalActions
                 .stream()
                 .map(conditionalAction -> new ConditionalAction<>(conditionalAction.condition(), conditionalAction.action().andThen(flatMapFunction)))
-                .collect(Collectors.toCollection(ArrayDeque::new));
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        return findMatchingFunction(queue, this.value)
+        return findMatchingFunction(updatedConditionalActions, this.value)
                 .map(function -> function.apply(this.value))
                 .orElseGet(Conditional::empty);
     }
@@ -85,16 +85,16 @@ public class Conditional<S, T> {
                 .apply(value);
     }
 
-    private static <S, T> Optional<Function<S, T>> findMatchingFunction(Queue<ConditionalAction<S, T>> actionQueue, S value) {
-        return actionQueue
+    private static <S, T> Optional<Function<S, T>> findMatchingFunction(List<ConditionalAction<S, T>> conditionalActions, S value) {
+        return conditionalActions
                 .stream()
-                .filter(entry -> entry.condition().test(value))
+                .dropWhile(entry -> !entry.condition().test(value))
                 .findFirst()
                 .map(ConditionalAction::action);
     }
 
     private Optional<Function<S, T>> findMatchingFunction(S value) {
-        return findMatchingFunction(this.actionQueue, value);
+        return findMatchingFunction(this.conditionalActions, value);
     }
 
     public record ConditionalAction<S, T>(Predicate<S> condition, Function<S, T> action) {
