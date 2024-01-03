@@ -16,11 +16,11 @@ public class Conditional<S, T> {
     }
 
     private static <S, T> Conditional<S, T> empty() {
-        return new Conditional<>(new ArrayList<>(), null);
+        return new Conditional<>(Collections.emptyList(), null);
     }
 
     public static <S> Conditional<S, S> of(S value) {
-        return new Conditional<>(new ArrayList<>(), value);
+        return new Conditional<>(Collections.emptyList(), value);
     }
 
     public static <S, U> ConditionalAction<S, U> applyIf(Predicate<S> condition, Function<S, U> function) {
@@ -85,7 +85,7 @@ public class Conditional<S, T> {
     private static <S, T> Optional<Function<S, T>> findMatchingFunction(List<ConditionalAction<S, T>> conditionalActions, S value) {
         return conditionalActions
                 .stream()
-                .dropWhile(entry -> !entry.condition().test(value))
+                .filter(entry -> entry.condition().test(value))
                 .findFirst()
                 .map(ConditionalAction::action);
     }
