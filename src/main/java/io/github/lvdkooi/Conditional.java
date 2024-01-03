@@ -39,7 +39,7 @@ public class Conditional<S, T> {
 
         var updatedConditionalActions = this.conditionalActions
                 .stream()
-                .map(conditionalAction -> new ConditionalAction<>(conditionalAction.condition(), conditionalAction.action().andThen(mapFunction)))
+                .map(conditionalAction -> conditionalAction.copyAndExtendActionWith(mapFunction))
                 .toList();
 
         return new Conditional<>(updatedConditionalActions, value);
@@ -50,7 +50,7 @@ public class Conditional<S, T> {
 
         var updatedConditionalActions = this.conditionalActions
                 .stream()
-                .map(conditionalAction -> new ConditionalAction<>(conditionalAction.condition(), conditionalAction.action().andThen(flatMapFunction)))
+                .map(conditionalAction -> conditionalAction.copyAndExtendActionWith(flatMapFunction))
                 .toList();
 
         return findMatchingFunction(updatedConditionalActions, this.value)
@@ -99,6 +99,10 @@ public class Conditional<S, T> {
         public ConditionalAction {
             Objects.requireNonNull(condition);
             Objects.requireNonNull(action);
+        }
+
+        public <U> ConditionalAction<S, U> copyAndExtendActionWith(Function<T, U> mappingFunction) {
+            return new ConditionalAction<>(this.condition, this.action.andThen(mappingFunction));
         }
     }
 }
