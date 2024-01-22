@@ -70,7 +70,7 @@ public class Conditional<S, T> {
     public T orElse(T defaultValue) {
         return Optional.ofNullable(value)
                 .flatMap(this::findMatchingFunction)
-                .orElseGet(() -> obj -> defaultValue)
+                .orElse(obj -> defaultValue)
                 .apply(value);
     }
 
