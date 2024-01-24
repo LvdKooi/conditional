@@ -39,24 +39,17 @@ public class Conditional<S, T> {
 
         var updatedConditionalActions = this.conditionalActions
                 .stream()
-                .map(conditionalAction -> conditionalAction.copyAndExtendActionWith(mapFunction))
+                .map(condAction -> condAction.and(mapFunction))
                 .toList();
 
         return new Conditional<>(updatedConditionalActions, value);
     }
 
-    public <U> Conditional<T, U> flatMap(Function<T, Conditional<T, U>> flatMapFunction) {
-        Objects.requireNonNull(flatMapFunction);
-
-        var updatedConditionalActions = this.conditionalActions
-                .stream()
-                .map(conditionalAction -> conditionalAction.copyAndExtendActionWith(flatMapFunction))
-                .toList();
-
-        return findMatchingFunction(updatedConditionalActions, this.value)
-                .map(function -> function.apply(this.value))
+    public <U> Conditional<S, U> flatMap(Function<T, Conditional<S, U>> flatMapFunction) {
+        return map(flatMapFunction)
                 .orElseGet(Conditional::empty);
     }
+
 
     public T orElseGet(Supplier<? extends T> supplier) {
         Objects.requireNonNull(supplier);
@@ -82,16 +75,12 @@ public class Conditional<S, T> {
                 .orElseThrow(throwableSupplier).apply(value);
     }
 
-    private static <S, T> Optional<Function<S, T>> findMatchingFunction(List<ConditionalAction<S, T>> conditionalActions, S value) {
+    private Optional<Function<S, T>> findMatchingFunction(S value) {
         return conditionalActions
                 .stream()
                 .filter(entry -> entry.condition().test(value))
                 .findFirst()
                 .map(ConditionalAction::action);
-    }
-
-    private Optional<Function<S, T>> findMatchingFunction(S value) {
-        return findMatchingFunction(this.conditionalActions, value);
     }
 
     public record ConditionalAction<S, T>(Predicate<S> condition, Function<S, T> action) {
@@ -101,8 +90,9 @@ public class Conditional<S, T> {
             Objects.requireNonNull(action);
         }
 
-        public <U> ConditionalAction<S, U> copyAndExtendActionWith(Function<T, U> mappingFunction) {
-            return new ConditionalAction<>(this.condition, this.action.andThen(mappingFunction));
+        public <U> ConditionalAction<S, U> and(Function<T, U> extraAction) {
+            return new ConditionalAction<>(condition,
+                    action.andThen(extraAction));
         }
     }
 }
