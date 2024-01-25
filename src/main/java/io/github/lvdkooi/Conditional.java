@@ -45,11 +45,10 @@ public class Conditional<S, T> {
         return new Conditional<>(updatedConditionalActions, value);
     }
 
-    public <U> Conditional<S, U> flatMap(Function<T, Conditional<S, U>> flatMapFunction) {
+    public <U> Conditional<T, U> flatMap(Function<T, Conditional<T, U>> flatMapFunction) {
         return map(flatMapFunction)
                 .orElseGet(Conditional::empty);
     }
-
 
     public T orElseGet(Supplier<? extends T> supplier) {
         Objects.requireNonNull(supplier);
