@@ -7,20 +7,22 @@ import java.util.function.Supplier;
 
 public class Conditional<S, T> {
 
-    private final List<ConditionalAction<S, T>> conditionalActions;
     private final S value;
+    private final List<ConditionalAction<S, T>> conditionalActions;
 
-    private Conditional(List<ConditionalAction<S, T>> conditionalActions, S value) {
-        this.conditionalActions = conditionalActions;
+
+    private Conditional(S value,
+                        List<ConditionalAction<S, T>> actions) {
         this.value = value;
-    }
-
-    private static <S, T> Conditional<S, T> empty() {
-        return new Conditional<>(Collections.emptyList(), null);
+        this.conditionalActions = actions;
     }
 
     public static <S> Conditional<S, S> of(S value) {
-        return new Conditional<>(Collections.emptyList(), value);
+        return new Conditional<>(value, Collections.emptyList());
+    }
+
+    private static <S, T> Conditional<S, T> empty() {
+        return new Conditional<>(null, Collections.emptyList());
     }
 
     public static <S, U> ConditionalAction<S, U> applyIf(Predicate<S> condition, Function<S, U> function) {
@@ -31,18 +33,18 @@ public class Conditional<S, T> {
     public final <U> Conditional<S, U> firstMatching(ConditionalAction<S, U>... actions) {
         var actionsAsList = Arrays.stream(actions).toList();
 
-        return new Conditional<>(actionsAsList, value);
+        return new Conditional<>(value, actionsAsList);
     }
 
     public <U> Conditional<S, U> map(Function<T, U> mapFunction) {
         Objects.requireNonNull(mapFunction);
 
-        var updatedConditionalActions = this.conditionalActions
+        var updatedConditionalActions = conditionalActions
                 .stream()
                 .map(condAction -> condAction.and(mapFunction))
                 .toList();
 
-        return new Conditional<>(updatedConditionalActions, value);
+        return new Conditional<>(value, updatedConditionalActions);
     }
 
     public <U> Conditional<T, U> flatMap(Function<T, Conditional<T, U>> flatMapFunction) {
@@ -66,17 +68,17 @@ public class Conditional<S, T> {
                 .apply(value);
     }
 
-    public <X extends Throwable> T orElseThrow(Supplier<? extends X> throwableSupplier) throws X {
-        Objects.requireNonNull(throwableSupplier);
+    public <X extends Throwable> T orElseThrow(Supplier<? extends X>
+                                                       exceptionSupplier) throws X {
+        Objects.requireNonNull(exceptionSupplier);
 
         return Optional.ofNullable(value)
                 .flatMap(this::findMatchingFunction)
-                .orElseThrow(throwableSupplier).apply(value);
+                .orElseThrow(exceptionSupplier).apply(value);
     }
 
     private Optional<Function<S, T>> findMatchingFunction(S value) {
-        return conditionalActions
-                .stream()
+        return conditionalActions.stream()
                 .filter(entry -> entry.condition().test(value))
                 .findFirst()
                 .map(ConditionalAction::action);
