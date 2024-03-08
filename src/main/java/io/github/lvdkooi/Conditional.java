@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class Conditional<S, T> {
+public final class Conditional<S, T> {
 
     private final S value;
     private final List<ConditionalAction<S, T>> conditionalActions;
