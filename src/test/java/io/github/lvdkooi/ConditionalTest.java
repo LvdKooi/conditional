@@ -28,7 +28,7 @@ class ConditionalTest {
         }
 
         @Test
-        @DisplayName("orElse: when no condition matches, then the default action is returned.")
+        @DisplayName("orElse: when no condition matches, then the default value is returned.")
         void conditionalWithOneConditionThatEvaluatesToFalse() {
             var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
                     .orElse(0);
@@ -47,7 +47,7 @@ class ConditionalTest {
         }
 
         @Test
-        @DisplayName("orElse: when no condition matches and the Conditional pipeline contains a map, then the default action is returned.")
+        @DisplayName("orElse: when no condition matches and the Conditional pipeline contains a map, then the default value is returned.")
         void conditionalWithOneConditionThatEvaluatesToFalse_ignoringMap() {
             var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
                     .map(i -> String.format("And the number is: %d", i))
@@ -67,7 +67,7 @@ class ConditionalTest {
         }
 
         @Test
-        @DisplayName("orElse: when no condition matches and the Conditional pipeline contains a flatMap, then the default action is returned.")
+        @DisplayName("orElse: when no condition matches and the Conditional pipeline contains a flatMap, then the default value is returned.")
         void conditionalWithOneConditionThatEvaluatesToFalse_ignoringFlatMap() {
             var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
                     .flatMap(ConditionalTest::conditionalThatMultipliesBy2WhenNumberIsEven)
@@ -77,7 +77,7 @@ class ConditionalTest {
         }
 
         @Test
-        @DisplayName("orElse: when a condition matches and the matching function evaluates to null, then a null is being returned and the default action is ignored.")
+        @DisplayName("orElse: when a condition matches and the matching function evaluates to null, then a null is being returned and the default value is ignored.")
         void conditionalWithOneConditionThatEvaluatesToTrueAndFunctionThatReturnsNull() {
             var outcome = Conditional.of(2)
                     .firstMatching(applyIf(isEven(), i -> null))
@@ -87,7 +87,7 @@ class ConditionalTest {
         }
 
         @Test
-        @DisplayName("orElse: when a null is passed as the object to be evaluated, then the default action is returned.")
+        @DisplayName("orElse: when a null is passed as the object to be evaluated, then the default value is returned.")
         void conditionalPassingInANull_orElse() {
             var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(null)
                     .orElse(0);
@@ -96,7 +96,7 @@ class ConditionalTest {
         }
 
         @Test
-        @DisplayName("orElse: when no condition matches and the default action is null, then this default action is returned.")
+        @DisplayName("orElse: when no condition matches and the default value is null, then this default value is returned.")
         void conditionalWithOneConditionThatEvaluatesToFalse_orElseWithNull() {
             var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
                     .orElse(null);
@@ -114,7 +114,7 @@ class ConditionalTest {
         }
 
         @Test
-        @DisplayName("orElse: when the Conditional pipeline contain multiple conditions that all evaluate to false, then the default action is returned.")
+        @DisplayName("orElse: when the Conditional pipeline contain multiple conditions that all evaluate to false, then the default value is returned.")
         void conditionalWithMultipleConditionsThatAllEvaluateToFalse() {
             var outcome = conditionalWithAllConditionsEvaluatingToFalse(0)
                     .orElse(9);
@@ -132,17 +132,23 @@ class ConditionalTest {
         void conditionalWithOneConditionThatEvaluatesToTrue() {
             var outcome = Conditional.of(2)
                     .firstMatching(applyIf(isEven(), Objects::toString))
-                    .orElseGet(() -> "hello world");
+                    .orElseGet(this::returnHelloWorld);
 
             assertThat(outcome).isEqualTo("2");
         }
 
+        private String returnHelloWorld() {
+            System.out.println("HELLO FROM ORELSEGET");
+
+            return "hello world";
+        }
+
         @Test
-        @DisplayName("orElseGet: when no condition matches, then the action evaluated from the default Supplier is returned.")
+        @DisplayName("orElseGet: when no condition matches, then the value evaluated from the default Supplier is returned.")
         void conditionalWithOneConditionThatEvaluatesToFalse() {
             var outcome = Conditional.of(2)
                     .firstMatching(applyIf(isEven().negate(), Object::toString))
-                    .orElseGet(() -> "hello world");
+                    .orElseGet(this::returnHelloWorld);
 
             assertThat(outcome).isEqualTo("hello world");
         }
@@ -158,7 +164,7 @@ class ConditionalTest {
         }
 
         @Test
-        @DisplayName("orElseGet: when no condition matches and the Conditional pipeline contains a map, then the action evaluated from the default Supplier is returned.")
+        @DisplayName("orElseGet: when no condition matches and the Conditional pipeline contains a map, then the value evaluated from the default Supplier is returned.")
         void conditionalWithOneConditionThatEvaluatesToFalse_ignoringMap() {
             var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
                     .map(i -> String.format("And the number is: %d", i))
@@ -178,7 +184,7 @@ class ConditionalTest {
         }
 
         @Test
-        @DisplayName("orElseGet: when no condition matches and the Conditional pipeline contains a flatMap, then the action evaluated from the default Supplier is returned.")
+        @DisplayName("orElseGet: when no condition matches and the Conditional pipeline contains a flatMap, then the value evaluated from the default Supplier is returned.")
         void conditionalWithOneConditionThatEvaluatesToFalse_ignoringFlatMap() {
             var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(3)
                     .flatMap(ConditionalTest::conditionalThatMultipliesBy2WhenNumberIsEven)
@@ -188,7 +194,7 @@ class ConditionalTest {
         }
 
         @Test
-        @DisplayName("orElseGet: when a null is passed as the object to be evaluated, then the action evaluated from the default Supplier is returned.")
+        @DisplayName("orElseGet: when a null is passed as the object to be evaluated, then the value evaluated from the default Supplier is returned.")
         void conditionalPassingInANull_orElseGet() {
             var outcome = conditionalThatMultipliesBy2WhenNumberIsEven(null)
                     .orElseGet(() -> 0);
@@ -225,7 +231,7 @@ class ConditionalTest {
         }
 
         @Test
-        @DisplayName("orElseGet: when the Conditional pipeline contain multiple conditions that all evaluate to false, then the action evaluated from the default Supplier is returned.")
+        @DisplayName("orElseGet: when the Conditional pipeline contain multiple conditions that all evaluate to false, then the value evaluated from the default Supplier is returned.")
         void conditionalWithMultipleConditionsThatAllEvaluateToFalse() {
             var outcome = conditionalWithAllConditionsEvaluatingToFalse(0)
                     .orElseGet(() -> 9);
