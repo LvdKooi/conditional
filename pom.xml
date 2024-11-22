@@ -19,7 +19,7 @@
         <maven.compiler.version>3.13.0</maven.compiler.version>
         <maven.resources.version>3.3.1</maven.resources.version>
         <nexus.staging.version>1.7.0</nexus.staging.version>
-        <maven.gpg.version>3.0.1</maven.gpg.version>
+        <maven.gpg.version>3.2.7</maven.gpg.version>
         <maven.source.version>2.2.1</maven.source.version>
         <maven.javadoc.version>3.11.1</maven.javadoc.version>
     </properties>
@@ -55,7 +55,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>${maven.gpg.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -63,12 +63,6 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
-                                <configuration>
-                                    <gpgArguments>
-                                        <arg>--pinentry-mode</arg>
-                                        <arg>loopback</arg>
-                                    </gpgArguments>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
