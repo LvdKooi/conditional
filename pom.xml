@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.lvdkooi</groupId>
@@ -13,15 +12,15 @@
 
     <properties>
         <junit.jupiter.version>5.11.3</junit.jupiter.version>
-        <assertj.core.version>3.24.2</assertj.core.version>
-        <maven.surefire.version>3.1.2</maven.surefire.version>
-        <maven.failsafe.version>3.1.2</maven.failsafe.version>
-        <maven.compiler.version>3.11.0</maven.compiler.version>
+        <assertj.core.version>3.26.3</assertj.core.version>
+        <maven.surefire.version>3.5.2</maven.surefire.version>
+        <maven.failsafe.version>3.5.2</maven.failsafe.version>
+        <maven.compiler.version>3.13.0</maven.compiler.version>
         <maven.resources.version>3.3.1</maven.resources.version>
-        <nexus.staging.version>1.6.13</nexus.staging.version>
-        <maven.gpg.version>1.5</maven.gpg.version>
+        <nexus.staging.version>1.7.0</nexus.staging.version>
+        <maven.gpg.version>3.2.7</maven.gpg.version>
         <maven.source.version>2.2.1</maven.source.version>
-        <maven.javadoc.version>2.9.1</maven.javadoc.version>
+        <maven.javadoc.version>3.11.1</maven.javadoc.version>
     </properties>
 
     <licenses>
@@ -109,6 +108,7 @@
         <connection>scm:git:git@github.com:LvdKooi/conditional.git</connection>
         <developerConnection>scm:git:git@github.com:LvdKooi/conditional.git</developerConnection>
         <url>http://github.com/LvdKooi/conditional/tree/master</url>
+        <tag>conditional-2.0.0</tag>
     </scm>
 
     <distributionManagement>
