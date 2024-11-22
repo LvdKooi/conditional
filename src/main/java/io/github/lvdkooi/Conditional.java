@@ -18,23 +18,9 @@ import java.util.function.Supplier;
  */
 public final class Conditional<S, T> {
 
-    /**
-     * The value wrapped by this {@code Conditional} container.
-     */
     private final S value;
-
-    /**
-     * A list of {@code ConditionalAction} instances, each containing a condition and an action.
-     * These actions are applied in sequence based on the value and their respective conditions.
-     */
     private final List<ConditionalAction<S, T>> conditionalActions;
 
-    /**
-     * Constructs a new {@code Conditional} instance with the given value and a list of conditional actions.
-     *
-     * @param value   The value to wrap in the {@code Conditional}.
-     * @param actions The list of conditional actions to apply.
-     */
     private Conditional(S value, List<ConditionalAction<S, T>> actions) {
         this.value = value;
         this.conditionalActions = actions;
@@ -52,13 +38,6 @@ public final class Conditional<S, T> {
         return new Conditional<>(value, Collections.emptyList());
     }
 
-    /**
-     * Creates an empty {@code Conditional} with a {@code null} value and no conditional actions.
-     *
-     * @param <S> The type of the value.
-     * @param <T> The type of the resulting value.
-     * @return An empty {@code Conditional}.
-     */
     private static <S, T> Conditional<S, T> empty() {
         return new Conditional<>(null, Collections.emptyList());
     }
@@ -167,12 +146,6 @@ public final class Conditional<S, T> {
                 .apply(value);
     }
 
-    /**
-     * Finds the first matching function for the given value.
-     *
-     * @param value The value to check against the conditions.
-     * @return An {@code Optional} containing the matching function, or empty if no conditions match.
-     */
     private Optional<Function<S, T>> findMatchingFunction(S value) {
         return conditionalActions.stream()
                 .filter(entry -> entry.condition().test(value))
