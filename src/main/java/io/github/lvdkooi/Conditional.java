@@ -1,182 +1,188 @@
 package io.github.lvdkooi;
 
-import java.util.ArrayDeque;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Queue;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
- * The `Conditional` class offers a way to organize conditional actions using a monadic approach. It allows chaining
- * and applying conditional actions based on predicates and functions. It supports building a sequence of conditions and
- * corresponding actions to be executed based on those conditions and has the capability to default to a predefined
- * action or value when no conditions are met.
+ * A monad-like container for applying conditional logic in a functional way.
+ * The {@code Conditional} class encapsulates a value and a list of conditional actions that can be applied to it.
+ * It provides various methods for transforming the value or performing operations depending on whether conditions are met.
  *
- * @param <T> The type of input object.
- * @param <R> The type of result produced by the actions.
- * @author Laurens van der Kooi
+ * <p>This class allows chaining conditions and actions in a functional pipeline, making the code more readable
+ * and reusable compared to traditional imperative {@code if-else} statements.
+ *
+ * @param <S> The type of the input value.
+ * @param <T> The type of the resulting value after the conditions and actions are applied.
  */
-public class Conditional<T, R> {
-    private final Queue<Pair<Predicate<T>, Function<T, R>>> actionQueue;
-    private final Function<T, R> currentFunction;
+public final class Conditional<S, T> {
 
-    /**
-     * Constructs a `Conditional` instance with an initial action queue and a current function.
-     *
-     * @param actionQueue     The queue of predicate-function pairs representing conditions and actions.
-     * @param currentFunction The current function associated with this `Conditional` instance.
-     */
-    private Conditional(Queue<Pair<Predicate<T>, Function<T, R>>> actionQueue, Function<T, R> currentFunction) {
-        this.actionQueue = actionQueue;
-        this.currentFunction = currentFunction;
+    private final S value;
+    private final List<ConditionalAction<S, T>> conditionalActions;
+
+    private Conditional(S value, List<ConditionalAction<S, T>> actions) {
+        this.value = value;
+        this.conditionalActions = actions;
     }
 
     /**
-     * Defines the initial action for the 'Conditional' pipeline. This method should consistently be
-     * succeeded by a corresponding when method, containing the condition that has to match for this function to be evaluated.
+     * Creates a new {@code Conditional} instance with the given value.
+     * The value will be wrapped in the container with no initial conditions.
      *
-     * @param function The initial function to be associated with the `Conditional` instance.
-     * @param <T>      The type of input object.
-     * @param <R>      The type of result produced by the function.
-     * @return A new `Conditional` instance with the provided function.
-     * @throws NullPointerException If the provided function is null.
+     * @param value The value to wrap in the {@code Conditional}.
+     * @param <S>   The type of the value.
+     * @return A new {@code Conditional} instance.
      */
-    public static <T, R> Conditional<T, R> apply(Function<T, R> function) {
-        Objects.requireNonNull(function);
-        return new Conditional<>(new ArrayDeque<>(1), function);
+    public static <S> Conditional<S, S> of(S value) {
+        return new Conditional<>(value, Collections.emptyList());
+    }
+
+    private static <S, T> Conditional<S, T> empty() {
+        return new Conditional<>(null, Collections.emptyList());
     }
 
     /**
-     * Incorporates a condition-action pair into the Conditional instance, utilizing the provided condition and the
-     * action that was previously specified in the apply/orApply chain before this when method.
+     * Creates a {@code ConditionalAction} that applies the given condition and function.
      *
-     * @param condition The condition to be checked before applying the current function.
-     * @return A new `Conditional` instance with the added condition-action pair.
-     * @throws NullPointerException If the provided condition is null, or if the current function is not set.
+     * @param condition The condition to check.
+     * @param function  The function to apply if the condition is true.
+     * @param <S>       The type of the input value.
+     * @param <U>       The type of the result after the function is applied.
+     * @return A new {@code ConditionalAction} instance.
      */
-    public Conditional<T, R> when(Predicate<T> condition) {
-        assertCurrentFunctionAndPredicateAreValid(condition);
-
-        var queue = new ArrayDeque<>(this.actionQueue);
-        queue.add(new Pair<>(condition, currentFunction));
-
-        return new Conditional<>(queue, null);
+    public static <S, U> ConditionalAction<S, U> applyIf(Predicate<S> condition, Function<S, U> function) {
+        return new ConditionalAction<>(condition, function);
     }
 
     /**
-     * Defines an alternative action to be executed when the subsequent condition evaluates to true,
-     * but only if none of the preceding conditions have evaluated to true. This method should consistently be
-     * succeeded by a corresponding when method, containing the condition that has to match for this function
-     * to be evaluated.
+     * Applies the given conditional actions in order, and returns a new {@code Conditional} instance with the
+     * value transformed based on the first matching condition.
      *
-     * @param function The alternative function to be associated with a succeeding condition.
-     * @return A new `Conditional` instance with the provided alternative function.
-     * @throws NullPointerException If the provided function is null.
+     * @param actions The conditional actions to apply.
+     * @param <U>     The type of the resulting value.
+     * @return A new {@code Conditional} instance with the transformed value.
      */
-    public Conditional<T, R> orApply(Function<T, R> function) {
-        Objects.requireNonNull(function);
-        return new Conditional<>(this.actionQueue, function);
+    @SafeVarargs
+    public final <U> Conditional<S, U> firstMatching(ConditionalAction<S, U>... actions) {
+        var actionsAsList = Arrays.stream(actions).toList();
+        return new Conditional<>(value, actionsAsList);
     }
 
     /**
-     * If a condition matches, applies the provided function to the outcome of the matching action.
+     * Transforms the value inside the {@code Conditional} using the given mapping function.
      *
-     * @param mapFunction The mapping function to transform the current function's result.
-     * @param <U>         The type of result produced by the mapping function.
-     * @return A new `Conditional` instance with the mapped result type.
-     * @throws NullPointerException If the provided mapping function is null.
+     * @param mapFunction The function to apply to the value inside the {@code Conditional}.
+     * @param <U>         The type of the resulting value.
+     * @return A new {@code Conditional} instance with the transformed value.
      */
-    public <U> Conditional<T, U> map(Function<R, U> mapFunction) {
+    public <U> Conditional<S, U> map(Function<T, U> mapFunction) {
         Objects.requireNonNull(mapFunction);
 
-        var queue = this.actionQueue
+        var updatedConditionalActions = conditionalActions
                 .stream()
-                .map(pair -> new Pair<>(pair.key(), pair.value().andThen(mapFunction)))
-                .collect(Collectors.toCollection(ArrayDeque::new));
+                .map(condAction -> condAction.and(mapFunction))
+                .toList();
 
-        return new Conditional<>(queue, null);
+        return new Conditional<>(value, updatedConditionalActions);
     }
 
     /**
-     * Applies the actions associated with conditions to the provided object, or else returns a default value
-     * supplied by the given supplier.
+     * Applies the given flatMap function to the value inside the {@code Conditional} and returns a new
+     * {@code Conditional} based on the result of the transformation.
      *
-     * @param object   The object to which the actions are applied.
-     * @param supplier The supplier providing the default value if no condition matches.
-     * @return The result of applying the appropriate action to the object, or the default value if no match is found.
-     * @throws NullPointerException If the provided supplier is null.
+     * @param flatMapFunction The function to apply that returns another {@code Conditional}.
+     * @param <U>             The type of the resulting value.
+     * @return A new {@code Conditional} instance containing the transformed value.
      */
-    public R applyToOrElseGet(T object, Supplier<? extends R> supplier) {
+    public <U> Conditional<T, U> flatMap(Function<T, Conditional<T, U>> flatMapFunction) {
+        return map(flatMapFunction)
+                .orElseGet(Conditional::empty);
+    }
+
+    /**
+     * Returns the value inside the {@code Conditional}, or invokes the given supplier if no condition matches.
+     *
+     * @param supplier The supplier to invoke if no conditions are met.
+     * @return The value inside the {@code Conditional}, or the value from the supplier.
+     */
+    public T orElseGet(Supplier<? extends T> supplier) {
         Objects.requireNonNull(supplier);
 
-        return Optional.ofNullable(object)
+        return Optional.ofNullable(value)
                 .flatMap(this::findMatchingFunction)
-                .orElseGet(() -> obj -> supplier.get())
-                .apply(object);
+                .orElse(obj -> supplier.get())
+                .apply(value);
     }
 
     /**
-     * Applies the actions associated with conditions to the provided object, or else returns a default value.
+     * Returns the value inside the {@code Conditional}, or the provided default value if no condition matches.
      *
-     * @param object       The object to which the actions are applied.
-     * @param defaultValue The default value to be returned if no condition matches.
-     * @return The result of applying the appropriate action to the object, or the default value if no match is found.
+     * @param defaultValue The default value to return if no conditions are met.
+     * @return The value inside the {@code Conditional}, or the default value.
      */
-    public R applyToOrElse(T object, R defaultValue) {
-        return Optional.ofNullable(object)
+    public T orElse(T defaultValue) {
+        return Optional.ofNullable(value)
                 .flatMap(this::findMatchingFunction)
-                .orElseGet(() -> obj -> defaultValue)
-                .apply(object);
+                .orElse(obj -> defaultValue)
+                .apply(value);
     }
 
     /**
-     * Applies the actions associated with conditions to the provided object, or else throws an exception
-     * supplied by the given throwable supplier.
+     * Returns the value inside the {@code Conditional}, or throws an exception provided by the exception supplier
+     * if no condition matches.
      *
-     * @param object            The object to which the actions are applied.
-     * @param throwableSupplier The supplier providing the throwable to be thrown if no condition matches.
-     * @param <X>               The type of the exception to be thrown.
-     * @return The result of applying the appropriate action to the object.
-     * @throws X                    If no condition matches and the throwable supplier provides an exception.
-     * @throws NullPointerException If the provided throwable supplier is null.
+     * @param exceptionSupplier The supplier to provide the exception to throw.
+     * @param <X>               The type of the exception to throw.
+     * @return The value inside the {@code Conditional}.
+     * @throws X If no condition matches, the exception is thrown.
      */
-    public <X extends Throwable> R applyToOrElseThrow(T object, Supplier<? extends X> throwableSupplier) throws X {
-        Objects.requireNonNull(throwableSupplier);
+    public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
+        Objects.requireNonNull(exceptionSupplier);
 
-        return Optional.ofNullable(object)
+        return Optional.ofNullable(value)
                 .flatMap(this::findMatchingFunction)
-                .orElseThrow(throwableSupplier)
-                .apply(object);
+                .orElseThrow(exceptionSupplier)
+                .apply(value);
     }
 
-    private Optional<Function<T, R>> findMatchingFunction(T t) {
-        return actionQueue
-                .stream()
-                .filter(entry -> entry.key().test(t))
+    private Optional<Function<S, T>> findMatchingFunction(S value) {
+        return conditionalActions.stream()
+                .filter(entry -> entry.condition().test(value))
                 .findFirst()
-                .map(Pair::value);
-    }
-
-    private void assertCurrentFunctionAndPredicateAreValid(Predicate<T> predicate) {
-        Objects.requireNonNull(currentFunction, "The function that belongs to this condition is not yet set. " +
-                "A predicate can only be added after an apply(Function<T, R> function) or orApply(Function<T, R> function).");
-        Objects.requireNonNull(predicate);
+                .map(ConditionalAction::action);
     }
 
     /**
-     * Represents a pair of key and value.
+     * A record that represents a conditional action consisting of a condition and a function.
+     * The condition is evaluated, and if it is {@code true}, the function is applied to the value.
      *
-     * @param <T> The type of the key.
-     * @param <R> The type of the value.
+     * @param <S> The type of the value to check.
+     * @param <T> The type of the resulting value after the function is applied.
      */
-    private record Pair<T, R>(T key, R value) {
+    public record ConditionalAction<S, T>(Predicate<S> condition, Function<S, T> action) {
 
-        private Pair {
-            Objects.requireNonNull(key);
-            Objects.requireNonNull(value);
+        /**
+         * Constructs a new {@code ConditionalAction} with the given condition and action.
+         *
+         * @param condition The condition to check.
+         * @param action    The function to apply if the condition is {@code true}.
+         */
+        public ConditionalAction {
+            Objects.requireNonNull(condition);
+            Objects.requireNonNull(action);
+        }
+
+        /**
+         * Combines this {@code ConditionalAction} with an additional action.
+         * The new action is applied after the original one.
+         *
+         * @param extraAction The extra function to apply after the original action.
+         * @param <U>         The type of the new resulting value.
+         * @return A new {@code ConditionalAction} with the combined actions.
+         */
+        public <U> ConditionalAction<S, U> and(Function<T, U> extraAction) {
+            return new ConditionalAction<>(condition, action.andThen(extraAction));
         }
     }
 }

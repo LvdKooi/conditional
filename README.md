@@ -1,184 +1,121 @@
-# The Conditional
+# Conditional: A Monad-Inspired Container for Functional Conditional Logic in Java
 
-The Conditional: Structuring Conditional Actions In A Monadic Way
+The `Conditional` class is a monad-like container designed to facilitate the management of conditional operations in a functional way. Drawing inspiration from Java's `Optional`, `Stream`, and `CompletableFuture`, `Conditional` allows you to compose conditional logic into a functional pipeline, making it a clean and reusable alternative to traditional imperative `if-then-else` statements.
 
-**Author:** _Laurens van der Kooi_ 
+**Author:** _Laurens van der Kooi_
 
-## Introduction
-Drawing inspiration from Java's [Optional](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html), the Conditional Monad offers a way to organize conditional actions using a monadic approach. It also provides the capability to default to a predefined action or value when no conditions are met.
+## Motivation
 
-An illustrative example is as follows:
-
-```
-    private static final Double ZERO = 0.0;
-
-    public Double calculateNumber(int number) {
-        return Conditional
-                .apply((Integer i) -> i * 2.5)
-                .when(i -> i % 2 == 0)
-                .orApply(i -> i * 0.5)
-                .when(i -> i > 100)
-                .applyToOrElse(number, ZERO);
-    }
-```
-
-In this instance, the scenario can be distilled as follows:
-
-- Take an integral number;
-- If the number is even, multiply the number by 2.5;
-- Otherwise, if the number is greater than 100, halve it;
-- If none of the conditions are satisfied, default to 0.0.
-
-In order to maintain code readability, it is recommended to use this monad with actions (which are used in the ```apply```/```orApply``` methods) and conditions (that are used in the ```when``` methods) that are encapsulated within separate methods.
-
-This would look like this:
+In traditional Java code, conditional business logic often requires multiple nested `if-else` statements: 
 
 ```
-    private static final Double ZERO = 0.0;
-
-    public Double calculateNumber(int number) {
-        return Conditional
-                .apply(timesTwoAndAHalf())
-                .when(isEven())
-                .orApply(halfIt())
-                .when(isLargerThan(100))
-                .applyToOrElse(number, ZERO);
+public static BigDecimal calculateNumber(int number) {
+    if (number % 2 == 0) {
+        return BigDecimal.valueOf(number * 2.5);
     }
 
-    private static Function<Integer, Double> timesTwoAndAHalf() {
-        return i -> i * 2.5;
+    if (number > 100) {
+        return BigDecimal.valueOf(number * 0.5);
     }
 
-    private static Function<Integer, Double> halfIt() {
-        return i -> i * 0.5;
-    }
-
-    private static Predicate<Integer> isEven() {
-        return i -> i % 2 == 0;
-    }
-
-    private static Predicate<Integer> isLargerThan(int number) {
-        return i -> i > number;
-    }
-```
-
-A Conditional pipeline is composed of intermediate operations and a terminal operation. The following provides descriptions of each.
-
-## Intermediate operations
-
-### - _apply_, _when_ and _orApply_
-The Conditional encompasses 3 intermediate operations that serve to define an action alongside a corresponding condition, which must evaluate to ```true``` for the action to be executed.
-
-These are:
-- ```apply```: which is the entry point of the Conditional, containing the first action. This method receives a ```Function<T, R>```, where ```T``` is the type of the value which is the input for the Conditonal, and ```R``` is the value that is returned by the function.
-- ```when```: which is the condition that must evaluate to ```true``` for the previous function to be applied. This method takes a ```Predicate<T>```, where ```T``` denotes the input value type for the Conditional.
-- ```orApply```: which outlines the subsequent action to be executed exclusively when the subsequent condition evaluates to ```true```, under the condition that none of the preceding conditions have evaluated to ```true```. Just like ```apply```, this method receives a ```Function<T, R>```.
-
-The ```apply``` should consistently be succeeded by a corresponding ```when```, and similarly, this pattern applies to ```orApply``` as well.
-
-Conditions are assessed in the same order as they were chained within the Conditional pipeline. Please be aware that conditions and actions are _lazy evaluated_, meaning that only the action of the first condition that evaluates to ```true``` is executed, leaving all other conditions and actions unevaluated.
-
-An example containing one action/condition pair:
+    return BigDecimal.ZERO;
+}
 
 ```
-Conditional
-  .apply(timesTwoAndAHalf())
-  .when(isEven())
+
+This approach can become hard to read and maintain, especially when the logic involves many conditions. Inspired by monads in functional programming, I designed the `Conditional` type to express conditional logic more elegantly and compose it in a functional manner.
+
+
+
+### The Conditional Class
+
+The `Conditional` class is a custom monad-like container designed specifically for conditional operations. It offers a functional alternative to `if-then-else` statements, allowing you to chain conditions and their corresponding actions into a pipeline. This approach not only makes the code more readable but also more flexible and reusable.
+
+### Key Operations
+
+The `Conditional` class supports a variety of intermediate and terminal operations, including:
+
+- **Intermediate Operations**:
+  - `firstMatching`: Takes a list of conditions and actions, applying the first action whose condition matches the value.
+  - `map`: Transforms the value in the container using a provided function.
+  - `flatMap`: Allows chaining conditional operations by returning another `Conditional` from a transformation.
+
+- **Terminal Operations**:
+  - `orElse`: Returns the value inside the `Conditional`, or a default value if no conditions match.
+  - `orElseGet`: Returns the value or lazily evaluates a fallback function if no conditions match.
+  - `orElseThrow`: Throws an exception if no conditions match.
+
+## Example Usage
+
+Here’s an example of how to use `Conditional` to apply conditional logic functionally:
+
+```java
+public static BigDecimal calculateNumber(int number) {
+    return Conditional.of(number)
+            .firstMatching(
+                    applyIf(isEven(), times(2.5)),
+                    applyIf(isLargerThan(100), times(0.5))
+            )
+            .map(BigDecimal::valueOf)
+            .orElse(BigDecimal.ZERO);
+}
+
+private static Function<Integer, Double> times(double factor) {
+    return i -> i * factor;
+}
+
+private static Predicate<Integer> isEven() {
+    return i -> i % 2 == 0;
+}
+
+private static Predicate<Integer> isLargerThan(int threshold) {
+    return i -> i > threshold;
+}
 ```
 
-An example containing multiple action/condition pairs:
+In this example:
+- We use `Conditional.of(number)` to wrap the `number` in a `Conditional`.
+- We apply two conditions using `applyIf` (whether the number is even or greater than 100) and their corresponding actions (multiply by 2.5 or 0.5).
+- We then transform the result into a `BigDecimal` using `map`.
+- If no condition matches, we return a default value (`BigDecimal.ZERO`) using `orElse`.
 
-```
-Conditional
-  .apply(timesTwoAndAHalf())
-  .when(isEven())
-  .orApply(halfIt())
-  .when(isLargerThan(100))
-```
+## How It Works
 
-### - _map_
-The Conditional includes a single intermediate operation responsible for converting the value derived from the applied action into a value of a subsequent type. Just like Java's Optional and Stream, this function is called ```map```.
+The `Conditional` class follows the concept of monads, encapsulating values and offering methods to transform them. Here are the key components:
 
-- ```map```: which accepts a ```Function<R, U>```, wherein ```R``` represents the potential value returned from the ```apply``` or ```orApply``` methods, and ```U``` denotes the type of the value to which this method is mapping. This method is an optional part of the Conditional pipeline, and can be chained multiple times.
+1. **Unit Operation**: `Conditional.of(value)` wraps a value in a `Conditional` container.
+2. **FlatMap**: The `flatMap` method allows chaining operations that return other `Conditional` containers, enabling more complex transformations.
+3. **Binding Functions**: `map` and `firstMatching` are used to apply functions and conditions to the value inside the `Conditional`.
+4. **Terminal Operations**: Operations like `orElse`, `orElseGet`, and `orElseThrow` provide ways to retrieve the value or handle situations where no conditions match.
 
-An example containing a map function:
+## Benefits of Using `Conditional`
 
-```
-Conditional
-  .apply(timesTwoAndAHalf())
-  .when(isEven())
-  .orApply(halfIt())
-  .when(isLargerThan(100))
-  .map(d -> String.format("The outcome was: %f", d))
-```
-
-In this example, if any of the conditions evaluates to ```true```, the ```map``` function takes the Double originating from the action linked with that condition and maps it to a ```String```.
-
-## Terminal operations
-The Conditional contains 3 terminal operations: ```applyToOrElse```, ```applyToOrElseGet```, ```applyToOrElseThrow```. A terminal operation is an operation that marks the end of the Conditional pipeline. When a terminal operation is invoked on a Conditional, it triggers the actual processing of the intermediate operations and produces a result or a side-effect. A Conditional pipeline may only contain one terminal operation, whereas multiple intermediate operations are allowed.
-
-### - _applyToOrElse_
-- ```applyToOrElse```: takes 2 arguments; the first is the value that will be processed by the Conditional pipeline, the second a default value that is returned when no condition evaluates to ```true``` _or_ if the first argument is ```null```. The second argument is of the same type that would otherwise be returned by the pipeline if any condition in the pipeline evaluates to ```true```. This method is recommended if the default value is already in scope or is a constant. Putting a method call in the second argument is discouraged, since the second argument of this method is not _lazy evaluated_.  
-
-```
-    private static final Double ZERO = 0.0;
-
-    public Double calculateNumber(int number) {
-        return Conditional
-                .apply(timesTwoAndAHalf())
-                .when(isEven())
-                .orApply(halfIt())
-                .when(isLargerThan(100))
-                .applyToOrElse(number, ZERO);
-    }
-```
-
-### - _applyToOrElseGet_
-- ```applyToOrElseGet```: takes 2 arguments; the first argument is the value that will be processed by the Conditional pipeline, the second a ```Supplier``` that is evaluated when no condition evaluates to ```true``` _or_ if the first argument is ```null```. The Supplier should return an object of the same type that would otherwise be returned by the pipeline if any condition in the pipeline matches. The second argument to this method is _lazy evaluated_, and suitable for operations that you would only like to have executed when none of the conditions evaluates to ```true```.
-
-```
-    public Double calculateNumber(int number) {
-        return Conditional
-                .apply(timesTwoAndAHalf())
-                .when(isEven())
-                .orApply(halfIt())
-                .when(isLargerThan(100))
-                .applyToOrElseGet(number, () -> doAlternateCalculation(number));
-    }
-```
-
-### - _applyToOrElseThrow_
-- ``` applyToOrElseThrow```: takes 2 arguments: the first argument is the value that will be processed by the Conditional pipeline, the second a ```Supplier``` that returns a Throwable that will be thrown if no condition in the pipeline matches. This ```Throwable``` is also thrown when the first argument (the value to be processed) is ```null```. The second argument to this method is _lazy evaluated_.
-
-```
-    public Double calculateNumber(int number) {
-        return Conditional
-                .apply(timesTwoAndAHalf())
-                .when(isEven())
-                .orApply(halfIt())
-                .when(isLargerThan(100))
-                .applyToOrElseThrow(number, CalculationException::new);
-    }
-```
+- **Functional Composition**: Conditional logic can be composed into a pipeline, making it more readable and maintainable.
+- **Immutability**: The `Conditional` class is immutable, ensuring that transformations don't alter the original value.
+- **Extensibility**: New conditions and actions can be added without changing the existing logic, making the code more flexible.
 
 ## Installation
 
 **Apache Maven**
 
-If you’re using Maven to build your project, add the following to your ```pom.xml``` to use the Conditional:
+If you’re using Maven to build your project, add the following to your `pom.xml` to use the Conditional:
 
-```		
+```xml
 <dependency>
-	<groupId>io.github.lvdkooi</groupId>
-	<artifactId>conditional</artifactId>
-	<version>1.0.0</version>
+    <groupId>io.github.lvdkooi</groupId>
+    <artifactId>conditional</artifactId>
+    <version>2.0.0</version>
 </dependency>
 ```
 
 **Gradle**
 
-If you’re using Gradle to build your project, add the following to your ```build.gradle``` to use the Conditional:
+If you’re using Gradle to build your project, add the following to your `build.gradle` to use the Conditional:
 
+```gradle
+implementation 'io.github.lvdkooi:conditional:2.0.0'
 ```
-implementation 'io.github.lvdkooi:conditional:1.0.0'
-```
+
+## Conclusion
+
+The `Conditional` class is a powerful tool for developers who want to leverage functional programming techniques in Java. By encapsulating conditional logic into a monad-like container, it simplifies complex conditional operations and makes the code more declarative and maintainable. Try it out in your next project to see how functional pipelines can improve your conditional logic!
