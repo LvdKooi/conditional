@@ -8,7 +8,7 @@ The `Conditional` class is a monad-like container designed to facilitate the man
 
 In traditional Java code, conditional business logic often requires multiple nested `if-else` statements: 
 
-```
+```java
 public static BigDecimal calculateNumber(int number) {
     if (number % 2 == 0) {
         return BigDecimal.valueOf(number * 2.5);
@@ -20,7 +20,6 @@ public static BigDecimal calculateNumber(int number) {
 
     return BigDecimal.ZERO;
 }
-
 ```
 
 This approach can become hard to read and maintain, especially when the logic involves many conditions. Inspired by monads in functional programming, I designed the `Conditional` type to express conditional logic more elegantly and compose it in a functional manner.
