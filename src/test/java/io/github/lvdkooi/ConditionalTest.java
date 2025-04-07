@@ -138,8 +138,6 @@ class ConditionalTest {
         }
 
         private String returnHelloWorld() {
-            System.out.println("HELLO FROM ORELSEGET");
-
             return "hello world";
         }
 
